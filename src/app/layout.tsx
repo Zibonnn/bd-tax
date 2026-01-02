@@ -30,9 +30,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* July Font for Bangla */}
+        {/* General Sans from Fontshare - English titles */}
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap"
+          rel="stylesheet"
+        />
+        {/* July Font for Bangla body */}
         <link
           href="https://cdn.jsdelivr.net/gh/Taraldinn/soroborno-cdn@main/public/fonts/July-Font/font.css"
+          rel="stylesheet"
+        />
+        {/* Shurjo Bold for Bangla titles */}
+        <link
+          href="https://cdn.jsdelivr.net/gh/Taraldinn/soroborno-cdn@main/public/fonts/Shurjo/font.css"
           rel="stylesheet"
         />
       </head>

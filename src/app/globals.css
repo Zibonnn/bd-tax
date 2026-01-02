@@ -126,47 +126,69 @@
 }
 
 /* ========================================
-   Default Font (Inter for English)
+   Typography - English
+   General Sans for titles, Inter for body
    ======================================== */
 :root {
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-heading: "General Sans", var(--font-inter), system-ui, sans-serif;
   --font-scale: 1;
 }
 
 body {
-  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* English headings use General Sans */
+h1, h2, h3, h4, h5, h6,
+.tax-calculator__card-title,
+.tax-calculator__breakdown-title,
+.tax-calculator__summary-value {
+  font-family: var(--font-heading);
 }
 
 /* ========================================
-   Bangla Font (July Font) for bn language
+   Typography - Bangla
+   Shurjo for titles, July for body
    Scaled 1.2x to match English size
    ======================================== */
+:root[data-language="bn"],
 html[data-language="bn"] {
+  --font-body: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
+  --font-heading: "Shurjo Bold", "Shurjo", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
   --font-scale: 1.2;
 }
 
+/* Bangla body text uses July Font */
 html[data-language="bn"] body,
-html[data-language="bn"] .tax-calculator__card-title,
 html[data-language="bn"] .tax-calculator__label,
 html[data-language="bn"] .tax-calculator__field-hint,
 html[data-language="bn"] .tax-calculator__breakdown-hint,
 html[data-language="bn"] .tax-calculator__toggle-link,
 html[data-language="bn"] .tax-calculator__btn,
 html[data-language="bn"] .tax-calculator__summary-label,
-html[data-language="bn"] .tax-calculator__summary-value,
-html[data-language="bn"] .tax-calculator__breakdown-title,
 html[data-language="bn"] .tax-calculator__breakdown-note,
 html[data-language="bn"] .page-footer p,
 html[data-language="bn"] th,
 html[data-language="bn"] td,
 html[data-language="bn"] .site-header__nav-link {
-  font-family: "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", "Inter", system-ui, sans-serif;
 }
 
-/* Apply 1.2x scaling to Bangla text elements */
-html[data-language="bn"] .tax-calculator__card-title {
-  font-size: calc(1.125rem * var(--font-scale));
+/* Bangla titles use Shurjo */
+html[data-language="bn"] h1,
+html[data-language="bn"] h2,
+html[data-language="bn"] h3,
+html[data-language="bn"] h4,
+html[data-language="bn"] h5,
+html[data-language="bn"] h6,
+html[data-language="bn"] .tax-calculator__card-title,
+html[data-language="bn"] .tax-calculator__breakdown-title,
+html[data-language="bn"] .tax-calculator__summary-value {
+  font-family: "Shurjo Bold", "Shurjo", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
 }
 
+/* Apply 1.2x scaling to Bangla text elements (excluding Shurjo headings) */
 html[data-language="bn"] .tax-calculator__label {
   font-size: calc(0.875rem * var(--font-scale));
 }
@@ -186,18 +208,11 @@ html[data-language="bn"] .tax-calculator__toggle-link {
 
 html[data-language="bn"] .tax-calculator__btn {
   font-size: calc(0.875rem * var(--font-scale));
+  font-weight: bold;
 }
 
 html[data-language="bn"] .tax-calculator__summary-label {
   font-size: calc(0.75rem * var(--font-scale));
-}
-
-html[data-language="bn"] .tax-calculator__summary-value {
-  font-size: calc(1.125rem * var(--font-scale));
-}
-
-html[data-language="bn"] .tax-calculator__breakdown-title {
-  font-size: calc(0.9375rem * var(--font-scale));
 }
 
 html[data-language="bn"] .page-footer p {
@@ -335,10 +350,32 @@ html[data-language="bn"] input::placeholder {
   font-weight: 600;
   font-size: 0.8125rem;
   min-width: 2.5rem;
+  gap: 0.25rem;
+}
+
+.language-toggle__icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 .language-toggle__text {
   line-height: 1;
+}
+
+/* When English is active, toggle shows "বাং" - use July Font with scaling */
+html[data-language="en"] .language-toggle,
+html[data-language="en"] .language-toggle__text,
+html:not([data-language]) .language-toggle,
+html:not([data-language]) .language-toggle__text {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", "Inter", system-ui, sans-serif;
+  font-size: calc(0.8125rem * 1.2);
+}
+
+/* When Bangla is active, toggle shows "EN" - use Inter */
+html[data-language="bn"] .language-toggle,
+html[data-language="bn"] .language-toggle__text {
+  font-family: "Inter", system-ui, sans-serif;
 }
 
 .site-header__menu-icon {
@@ -427,7 +464,7 @@ html[data-language="bn"] input::placeholder {
 .tax-calculator__form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
 }
 
 .tax-calculator__field {
@@ -439,7 +476,7 @@ html[data-language="bn"] input::placeholder {
 .tax-calculator__breakdown-fields {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 1.5rem;
 }
 
 .tax-calculator__label {
