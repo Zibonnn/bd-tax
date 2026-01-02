@@ -48,7 +48,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(0.95 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -83,7 +83,7 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.12 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -137,6 +137,11 @@
   overflow: hidden;
   pointer-events: none;
   z-index: -1;
+  opacity: 0.06;
+}
+
+.dark .bg-circles {
+  opacity: 0.04;
 }
 
 .bg-circle {
@@ -150,7 +155,6 @@
   width: 1000px;
   height: 1000px;
   background: oklch(0.7 0.2 340);
-  opacity: 0.04;
   top: -10%;
   left: -10%;
 }
@@ -160,7 +164,6 @@
   width: 800px;
   height: 800px;
   background: oklch(0.75 0.15 190);
-  opacity: 0.04;
   top: 20%;
   right: -15%;
 }
@@ -170,7 +173,6 @@
   width: 1200px;
   height: 1200px;
   background: oklch(0.65 0.18 280);
-  opacity: 0.04;
   bottom: -15%;
   left: 30%;
 }
@@ -180,7 +182,6 @@
   width: 600px;
   height: 600px;
   background: oklch(0.8 0.18 70);
-  opacity: 0.04;
   top: 50%;
   left: -5%;
 }
@@ -190,7 +191,6 @@
   width: 700px;
   height: 700px;
   background: oklch(0.7 0.15 150);
-  opacity: 0.04;
   top: 5%;
   right: 20%;
 }
@@ -200,7 +200,6 @@
   width: 500px;
   height: 500px;
   background: oklch(0.65 0.2 250);
-  opacity: 0.04;
   bottom: 25%;
   right: 5%;
 }
@@ -208,32 +207,26 @@
 /* Dark mode - slightly adjusted colors for contrast */
 .dark .bg-circle--1 {
   background: oklch(0.55 0.22 340);
-  opacity: 0.04;
 }
 
 .dark .bg-circle--2 {
   background: oklch(0.5 0.18 190);
-  opacity: 0.04;
 }
 
 .dark .bg-circle--3 {
   background: oklch(0.45 0.2 280);
-  opacity: 0.04;
 }
 
 .dark .bg-circle--4 {
   background: oklch(0.55 0.2 70);
-  opacity: 0.04;
 }
 
 .dark .bg-circle--5 {
   background: oklch(0.45 0.18 150);
-  opacity: 0.04;
 }
 
 .dark .bg-circle--6 {
   background: oklch(0.45 0.22 250);
-  opacity: 0.04;
 }
 
 /* ========================================
@@ -430,16 +423,18 @@ th, td {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: oklch(1 0 0 / 55%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid oklch(0 0 0 / 6%);
+  background-color: oklch(0.98 0 0 / 70%);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid oklch(0 0 0 / 10%);
   z-index: 50;
 }
 
 .dark .site-header {
-  background-color: oklch(0.145 0 0 / 50%);
-  border-bottom: 1px solid oklch(1 0 0 / 6%);
+  background-color: oklch(0.1 0 0 / 70%);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid oklch(1 0 0 / 10%);
 }
 
 .site-header__container {
@@ -447,9 +442,28 @@ th, td {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  padding: 0 1rem;
-  max-width: 48rem;
+  padding: 0 0.75rem;
+  max-width: 100%;
   margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .site-header__container {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .site-header__container {
+    max-width: 48rem;
+    padding: 0 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-header__container {
+    padding: 0 1.5rem;
+  }
 }
 
 @media (min-width: 1280px) {
@@ -563,14 +577,30 @@ html[data-language="bn"] .language-toggle__text {
    ======================================== */
 .main-container {
   flex: 1;
-  padding: 1.5rem 1rem;
-  padding-top: calc(var(--header-height) + 1.5rem);
-  max-width: 48rem;
+  padding: 1rem 0.75rem;
+  padding-top: calc(var(--header-height) + 1rem);
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .main-container {
+    padding: 1.25rem 1rem;
+    padding-top: calc(var(--header-height) + 1.25rem);
+  }
 }
 
 @media (min-width: 640px) {
+  .main-container {
+    padding: 1.5rem 1.25rem;
+    padding-top: calc(var(--header-height) + 1.5rem);
+    max-width: 48rem;
+  }
+}
+
+@media (min-width: 768px) {
   .main-container {
     padding: 2rem 1.5rem;
     padding-top: calc(var(--header-height) + 2rem);
@@ -589,15 +619,36 @@ html[data-language="bn"] .language-toggle__text {
    Site Footer
    ======================================== */
 .site-footer {
-  margin-top: 3rem;
-  padding: 1.5rem 1rem;
+  margin-top: 2rem;
+  padding: 1.25rem 0.75rem;
   border-top: 1px solid var(--border);
   text-align: center;
 }
 
+@media (min-width: 480px) {
+  .site-footer {
+    margin-top: 2.5rem;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .site-footer {
+    margin-top: 3rem;
+  }
+}
+
 .site-footer__container {
-  max-width: 48rem;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .site-footer__container {
+    max-width: 48rem;
+    padding: 0;
+  }
 }
 
 @media (min-width: 1280px) {
@@ -611,17 +662,39 @@ html[data-language="bn"] .language-toggle__text {
   color: var(--muted-foreground);
 }
 
+@media (min-width: 480px) {
+  .site-footer__copyright {
+    font-size: 0.75rem;
+  }
+}
+
 /* ========================================
    Tax Calculator Component
    ======================================== */
 .tax-calculator {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .tax-calculator {
+    gap: 1.5rem;
+  }
 }
 
 @media (min-width: 1280px) {
   .tax-calculator {
+    display: grid;
     grid-template-columns: 1fr minmax(0, 48rem) 20rem;
     gap: 2rem;
   }
@@ -633,6 +706,8 @@ html[data-language="bn"] .language-toggle__text {
 
 .tax-calculator__sidebar--right {
   display: block;
+  width: 100%;
+  max-width: 100%;
 }
 
 @media (min-width: 1280px) {
@@ -645,22 +720,40 @@ html[data-language="bn"] .language-toggle__text {
     position: sticky;
     top: calc(var(--header-height) + 1.5rem);
     align-self: start;
+    width: auto;
   }
 }
 
 .tax-calculator__main {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__main {
+    gap: 1.5rem;
+  }
 }
 
 .tax-calculator__note {
   font-size: 0.75rem;
   color: var(--muted-foreground);
   text-align: center;
-  max-width: 36rem;
+  max-width: 100%;
   margin: 0 auto;
   line-height: 1.5;
+  padding: 0 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__note {
+    max-width: 36rem;
+    padding: 0;
+  }
 }
 
 .tax-calculator__input-card,
@@ -670,23 +763,18 @@ html[data-language="bn"] .language-toggle__text {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 2px solid transparent;
-  background-image: 
-    linear-gradient(oklch(1 0 0 / 45%), oklch(1 0 0 / 45%)),
-    linear-gradient(135deg, oklch(1 0 0 / 60%) 0%, oklch(1 0 0 / 20%) 40%, oklch(1 0 0 / 5%) 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
   box-shadow: none;
   overflow-x: hidden;
+  overflow-wrap: break-word;
   word-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .dark .tax-calculator__input-card,
 .dark .tax-calculator__result-card,
 .dark .tax-calculator__rates-card {
   background-color: oklch(0.205 0 0 / 40%);
-  background-image: 
-    linear-gradient(oklch(0.205 0 0 / 40%), oklch(0.205 0 0 / 40%)),
-    linear-gradient(135deg, oklch(1 0 0 / 18%) 0%, oklch(1 0 0 / 6%) 40%, oklch(1 0 0 / 2%) 100%);
 }
 
 .tax-calculator__input-card {
@@ -694,55 +782,108 @@ html[data-language="bn"] .language-toggle__text {
 }
 
 .tax-calculator__card-title {
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.4;
-  min-height: 1.75rem;
+  min-height: 1.5rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__card-title {
+    font-size: 1.125rem;
+    min-height: 1.75rem;
+  }
 }
 
 .tax-calculator__form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__form {
+    gap: 1.5rem;
+  }
 }
 
 .tax-calculator__field {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__field {
+    gap: 0.375rem;
+  }
 }
 
 .tax-calculator__breakdown-fields {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__breakdown-fields {
+    gap: 1.5rem;
+  }
 }
 
 .tax-calculator__label {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   line-height: 1.5;
-  min-height: 1.375rem;
+  min-height: 1.25rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__label {
+    font-size: 0.875rem;
+    min-height: 1.375rem;
+  }
 }
 
 .tax-calculator__field-hint {
   font-size: 0.75rem;
   color: var(--muted-foreground);
   line-height: 1.5;
-  min-height: 1.125rem;
+  min-height: 1rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__field-hint {
+    font-size: 0.75rem;
+    min-height: 1.125rem;
+  }
 }
 
 .tax-calculator__breakdown-hint {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: var(--muted-foreground);
   margin-bottom: 0.25rem;
   line-height: 1.5;
-  min-height: 1.25rem;
+  min-height: 1.125rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__breakdown-hint {
+    font-size: 0.8125rem;
+    min-height: 1.25rem;
+  }
 }
 
 .tax-calculator__input {
   font-size: 1rem;
-  padding: 0.625rem 0.875rem;
+  padding: 0.625rem 0.75rem;
   height: auto;
+  min-height: 2.75rem; /* Touch-friendly: 44px */
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__input {
+    padding: 0.625rem 0.875rem;
+  }
 }
 
 .tax-calculator__footer {
@@ -822,13 +963,23 @@ html[data-language="bn"] .language-toggle__text {
    ======================================== */
 .tax-calculator__summary {
   display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 480px) {
+  .tax-calculator__summary {
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
   .tax-calculator__summary {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -836,9 +987,15 @@ html[data-language="bn"] .language-toggle__text {
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-  padding: 0.875rem;
+  padding: 0.75rem;
   background-color: var(--muted);
   border-radius: var(--radius);
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__summary-item {
+    padding: 0.875rem;
+  }
 }
 
 .tax-calculator__summary-item--highlight {
@@ -859,10 +1016,17 @@ html[data-language="bn"] .language-toggle__text {
 }
 
 .tax-calculator__summary-value {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
-  min-height: 1.625rem;
+  min-height: 1.5rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__summary-value {
+    font-size: 1.125rem;
+    min-height: 1.625rem;
+  }
 }
 
 /* ========================================
@@ -887,6 +1051,141 @@ html[data-language="bn"] .language-toggle__text {
   line-height: 1.5;
 }
 
+/* ----------------------------------------
+   Breakdown Table - Desktop/Mobile Switch
+   ---------------------------------------- */
+
+/* Desktop table - show on larger screens */
+.tax-calculator__breakdown-desktop {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__breakdown-desktop {
+    display: block;
+  }
+}
+
+/* Mobile table - show on smaller screens */
+.tax-calculator__breakdown-mobile {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__breakdown-mobile {
+    display: none;
+  }
+}
+
+/* General table container styles */
+.tax-calculator__breakdown [data-slot="table-container"] {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__breakdown [data-slot="table-container"] {
+    margin: 0 -1.5rem;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__breakdown [data-slot="table-container"] {
+    margin: 0;
+    padding: 0;
+    overflow-x: visible;
+  }
+}
+
+.tax-calculator__breakdown table {
+  width: 100%;
+  min-width: 100%;
+  table-layout: auto;
+}
+
+/* ----------------------------------------
+   Stacked Cell Styles (Mobile Table)
+   ---------------------------------------- */
+.tax-calculator__stacked-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.tax-calculator__stacked-sub {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  opacity: 0.85;
+}
+
+.tax-calculator__stacked-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator__stacked-cell--right {
+  align-items: flex-end;
+}
+
+.tax-calculator__stacked-primary {
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.tax-calculator__stacked-secondary {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.3;
+}
+
+/* Mobile table specific styles */
+.tax-calculator__breakdown-mobile [data-slot="table-head"],
+.tax-calculator__breakdown-mobile [data-slot="table-cell"] {
+  padding: 0.5rem 0.5rem;
+  vertical-align: top;
+}
+
+.tax-calculator__breakdown-mobile [data-slot="table-head"] {
+  padding-bottom: 0.625rem;
+}
+
+.tax-calculator__breakdown-mobile table {
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__breakdown-mobile table {
+    font-size: 0.875rem;
+  }
+  
+  .tax-calculator__breakdown-mobile [data-slot="table-head"],
+  .tax-calculator__breakdown-mobile [data-slot="table-cell"] {
+    padding: 0.625rem 0.75rem;
+  }
+  
+  .tax-calculator__stacked-secondary {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Desktop table styles */
+.tax-calculator__breakdown-desktop [data-slot="table-head"],
+.tax-calculator__breakdown-desktop [data-slot="table-cell"] {
+  padding: 0.5rem 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .tax-calculator__breakdown-desktop [data-slot="table-head"],
+  .tax-calculator__breakdown-desktop [data-slot="table-cell"] {
+    padding: 0.625rem 1rem;
+  }
+}
+
 /* ========================================
    Tax Rates Reference Card
    ======================================== */
@@ -899,15 +1198,59 @@ html[data-language="bn"] .language-toggle__text {
   word-wrap: break-word;
 }
 
-.tax-calculator__rates-card table {
-  width: 100%;
-  table-layout: fixed;
+/* Rates List Layout - Responsive friendly */
+.tax-calculator__rates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-.tax-calculator__rates-card table td,
-.tax-calculator__rates-card table th {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+.tax-calculator__rates-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tax-calculator__rates-item:last-child {
+  border-bottom: none;
+}
+
+.tax-calculator__rates-income {
+  flex: 1;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--foreground);
+  word-break: break-word;
+}
+
+.tax-calculator__rates-rate {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--foreground);
+  text-align: right;
+  min-width: 3.5rem;
+}
+
+@media (min-width: 480px) {
+  .tax-calculator__rates-item {
+    padding: 0.625rem 0;
+  }
+  
+  .tax-calculator__rates-income,
+  .tax-calculator__rates-rate {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .tax-calculator__rates-item {
+    gap: 1rem;
+  }
 }
 
 .tax-calculator__source {
