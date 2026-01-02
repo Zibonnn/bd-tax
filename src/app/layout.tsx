@@ -47,6 +47,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} antialiased`}>
+        {/* Background decorative circles */}
+        <div className="bg-circles" aria-hidden="true">
+          <div className="bg-circle bg-circle--1" />
+          <div className="bg-circle bg-circle--2" />
+          <div className="bg-circle bg-circle--3" />
+          <div className="bg-circle bg-circle--4" />
+          <div className="bg-circle bg-circle--5" />
+          <div className="bg-circle bg-circle--6" />
+        </div>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

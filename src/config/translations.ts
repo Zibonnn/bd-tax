@@ -40,9 +40,12 @@ export interface Translations {
   yearlyIncome: string;
   taxRate: string;
   taxFree: string;
+  taxRateSourceLabel: string;
+  taxRateSourceValue: string;
 
   // Footer
   disclaimer: string;
+  footerCopyright: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -53,9 +56,9 @@ export const translations: Record<Language, Translations> = {
 
     // Calculator
     calculateYourTax: "Calculate Your Tax",
-    yourMonthlySalary: "Your Monthly Salary",
+    yourMonthlySalary: "Your Basic Salary",
     perMonth: "per month",
-    enterGrossMonthlySalary: "Enter your gross monthly salary in BDT",
+    enterGrossMonthlySalary: "Basic Salary = Gross Salary - Allowances",
     iKnowMyBreakdown: "I know my salary breakdown",
     iOnlyKnowTotal: "I only know my total salary",
     enterMonthlyComponents: "Enter your monthly salary components (per month)",
@@ -86,10 +89,13 @@ export const translations: Record<Language, Translations> = {
     yearlyIncome: "Yearly Income (BDT)",
     taxRate: "Tax Rate",
     taxFree: "Tax-free",
+    taxRateSourceLabel: "Source:",
+    taxRateSourceValue: "NBR Tax Guidelines 2025-26, p 8-9",
 
     // Footer
     disclaimer:
       "Disclaimer: This calculator provides estimates only. Please consult a tax professional for accurate tax advice.",
+    footerCopyright: "How Big Is That?",
   },
   bn: {
     // Header
@@ -98,12 +104,12 @@ export const translations: Record<Language, Translations> = {
 
     // Calculator
     calculateYourTax: "আপনার আয়কর হিসাব করুন",
-    yourMonthlySalary: "আপনার মাসিক বেতন",
+    yourMonthlySalary: "আপনার মূল বেতন",
     perMonth: "প্রতি মাসে",
-    enterGrossMonthlySalary: "আপনার মোট মাসিক বেতন টাকায় লিখুন",
+    enterGrossMonthlySalary: "মূল বেতন = মোট বেতন - বিভিন্ন খাতে প্রাপ্ত টাকার পরিমাণ",
     iKnowMyBreakdown: "আমি আমার বেতনের ব্রেকডাউন জানি",
     iOnlyKnowTotal: "আমি শুধু মোট বেতন জানি",
-    enterMonthlyComponents: "আপনার মাসিক বেতনের উপাদানগুলো লিখুন (প্রতি মাসে)",
+    enterMonthlyComponents: "আপনার মাসিক বেতনের বিভিন্ন খাতে প্রাপ্ত টাকার পরিমাণ লিখুন (প্রতি মাসে)",
     basicSalary: "মূল বেতন",
     houseRentAllowance: "বাড়ি ভাড়া ভাতা",
     medicalAllowance: "চিকিৎসা ভাতা",
@@ -131,10 +137,13 @@ export const translations: Record<Language, Translations> = {
     yearlyIncome: "বার্ষিক আয় (টাকা)",
     taxRate: "কর হার",
     taxFree: "করমুক্ত",
+    taxRateSourceLabel: "সূত্র:",
+    taxRateSourceValue: "এনবিআর আয়কর নির্দেশিকা ২০২৫-২৬, পৃষ্ঠা ৮-৯",
 
     // Footer
     disclaimer:
       "দ্রষ্টব্য: এই ক্যালকুলেটর শুধুমাত্র আনুমানিক হিসাব দেয়। সঠিক কর পরামর্শের জন্য একজন কর বিশেষজ্ঞের সাথে যোগাযোগ করুন।",
+    footerCopyright: "How Big Is That?",
   },
 };
 

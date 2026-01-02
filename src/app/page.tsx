@@ -12,10 +12,12 @@ export default function HomePage() {
       <Header />
       <main className="main-container">
         <TaxCalculator />
-        <footer className="page-footer">
-          <p>{t.disclaimer}</p>
-        </footer>
       </main>
+      <footer className="site-footer">
+        <div className="site-footer__container">
+          <p className="site-footer__copyright">{t.footerCopyright}</p>
+        </div>
+      </footer>
     </>
   );
 }

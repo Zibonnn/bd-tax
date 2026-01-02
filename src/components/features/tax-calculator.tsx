@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -134,6 +135,26 @@ export function TaxCalculator() {
   };
 
   const toggleBreakdown = () => {
+    if (!showBreakdown) {
+      // Switching TO breakdown mode: set monthly salary as basic
+      if (monthlySalary) {
+        setBreakdown((prev) => ({
+          ...prev,
+          basic: monthlySalary,
+        }));
+      }
+    } else {
+      // Switching FROM breakdown mode: calculate total and set as monthly salary
+      const basic = parseNumber(breakdown.basic);
+      const houseRent = parseNumber(breakdown.houseRent);
+      const medical = parseNumber(breakdown.medical);
+      const conveyance = parseNumber(breakdown.conveyance);
+      const others = parseNumber(breakdown.others);
+      const total = basic + houseRent + medical + conveyance + others;
+      if (total > 0) {
+        setMonthlySalary(total.toLocaleString("en-IN"));
+      }
+    }
     setShowBreakdown((prev) => !prev);
     setResult(null);
   };
@@ -156,7 +177,11 @@ export function TaxCalculator() {
 
   return (
     <div className="tax-calculator">
-      <Card className="tax-calculator__input-card">
+      <div className="tax-calculator__sidebar tax-calculator__sidebar--left">
+        {/* Left sidebar - future content */}
+      </div>
+      <div className="tax-calculator__main">
+        <Card className="tax-calculator__input-card">
         <CardHeader>
           <CardTitle className="tax-calculator__card-title">
             {t.calculateYourTax}
@@ -307,6 +332,8 @@ export function TaxCalculator() {
         </CardContent>
       </Card>
 
+      <p className="tax-calculator__note">{t.disclaimer}</p>
+
       {result && result.annualIncome > 0 && (
         <Card className="tax-calculator__result-card">
           <CardHeader>
@@ -391,34 +418,49 @@ export function TaxCalculator() {
           </CardContent>
         </Card>
       )}
+      </div>
 
-      <Card className="tax-calculator__rates-card">
-        <CardHeader>
-          <CardTitle className="tax-calculator__card-title">
-            {t.taxRates} ({TAX_CONFIG.fiscalYear})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.yearlyIncome}</TableHead>
-                <TableHead className="text-right">{t.taxRate}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {localizedBrackets.map((bracket, index) => (
-                <TableRow key={index}>
-                  <TableCell>{bracket.description}</TableCell>
-                  <TableCell className="text-right">
-                    {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
-                  </TableCell>
+      <div className="tax-calculator__sidebar tax-calculator__sidebar--right">
+        <Card className="tax-calculator__rates-card">
+          <CardHeader>
+            <CardTitle className="tax-calculator__card-title">
+              {t.taxRates} ({TAX_CONFIG.fiscalYear})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t.yearlyIncome}</TableHead>
+                  <TableHead className="text-right">{t.taxRate}</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {localizedBrackets.map((bracket, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{bracket.description}</TableCell>
+                    <TableCell className="text-right">
+                      {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <p className="tax-calculator__source">
+              <span className="tax-calculator__source-label">{t.taxRateSourceLabel}</span>
+              <a
+                href="https://nbr.gov.bd/uploads/news-scroller/Nirdeshika_2025-26.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tax-calculator__source-link"
+              >
+                {t.taxRateSourceValue}
+                <ArrowUpRight className="tax-calculator__source-icon" />
+              </a>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

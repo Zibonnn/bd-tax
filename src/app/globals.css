@@ -63,8 +63,8 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0 0 0 / 6%);
+  --input: oklch(0 0 0 / 8%);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -98,8 +98,8 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(1 0 0 / 5%);
+  --input: oklch(1 0 0 / 8%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -126,6 +126,117 @@
 }
 
 /* ========================================
+   Background Decorative Circles
+   ======================================== */
+.bg-circles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+/* Circle 1 - Large pink/magenta */
+.bg-circle--1 {
+  width: 1000px;
+  height: 1000px;
+  background: oklch(0.7 0.2 340);
+  opacity: 0.04;
+  top: -10%;
+  left: -10%;
+}
+
+/* Circle 2 - Medium cyan/teal */
+.bg-circle--2 {
+  width: 800px;
+  height: 800px;
+  background: oklch(0.75 0.15 190);
+  opacity: 0.04;
+  top: 20%;
+  right: -15%;
+}
+
+/* Circle 3 - Large purple/violet */
+.bg-circle--3 {
+  width: 1200px;
+  height: 1200px;
+  background: oklch(0.65 0.18 280);
+  opacity: 0.04;
+  bottom: -15%;
+  left: 30%;
+}
+
+/* Circle 4 - Small orange/amber */
+.bg-circle--4 {
+  width: 600px;
+  height: 600px;
+  background: oklch(0.8 0.18 70);
+  opacity: 0.04;
+  top: 50%;
+  left: -5%;
+}
+
+/* Circle 5 - Medium green/emerald */
+.bg-circle--5 {
+  width: 700px;
+  height: 700px;
+  background: oklch(0.7 0.15 150);
+  opacity: 0.04;
+  top: 5%;
+  right: 20%;
+}
+
+/* Circle 6 - Small blue */
+.bg-circle--6 {
+  width: 500px;
+  height: 500px;
+  background: oklch(0.65 0.2 250);
+  opacity: 0.04;
+  bottom: 25%;
+  right: 5%;
+}
+
+/* Dark mode - slightly adjusted colors for contrast */
+.dark .bg-circle--1 {
+  background: oklch(0.55 0.22 340);
+  opacity: 0.04;
+}
+
+.dark .bg-circle--2 {
+  background: oklch(0.5 0.18 190);
+  opacity: 0.04;
+}
+
+.dark .bg-circle--3 {
+  background: oklch(0.45 0.2 280);
+  opacity: 0.04;
+}
+
+.dark .bg-circle--4 {
+  background: oklch(0.55 0.2 70);
+  opacity: 0.04;
+}
+
+.dark .bg-circle--5 {
+  background: oklch(0.45 0.18 150);
+  opacity: 0.04;
+}
+
+.dark .bg-circle--6 {
+  background: oklch(0.45 0.22 250);
+  opacity: 0.04;
+}
+
+/* ========================================
    Typography - English
    General Sans for titles, Inter for body
    ======================================== */
@@ -137,6 +248,9 @@
 
 body {
   font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* English headings use General Sans */
@@ -236,6 +350,27 @@ html[data-language="bn"] input::placeholder {
 }
 
 /* ========================================
+   Language Switch Transitions
+   Smooth font-size changes between languages
+   ======================================== */
+.tax-calculator__label,
+.tax-calculator__field-hint,
+.tax-calculator__breakdown-hint,
+.tax-calculator__breakdown-note,
+.tax-calculator__toggle-link,
+.tax-calculator__btn,
+.tax-calculator__card-title,
+.tax-calculator__breakdown-title,
+.tax-calculator__summary-label,
+.tax-calculator__summary-value,
+.tax-calculator__note,
+.site-header__nav-link,
+.site-footer__copyright,
+th, td {
+  transition: font-size 0.2s ease;
+}
+
+/* ========================================
    Theme Toggle Animation (Ripple Effect)
    ======================================== */
 ::view-transition-old(root),
@@ -264,7 +399,7 @@ html[data-language="bn"] input::placeholder {
   animation: ripple-in 0.5s ease-out;
 }
 
-.dark::view-transition-old(root) {
+::view-transition-old(root) {
   animation: ripple-out 0.5s ease-out;
 }
 
@@ -295,9 +430,16 @@ html[data-language="bn"] input::placeholder {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: var(--background);
-  border-bottom: 1px solid var(--border);
+  background-color: oklch(1 0 0 / 55%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid oklch(0 0 0 / 6%);
   z-index: 50;
+}
+
+.dark .site-header {
+  background-color: oklch(0.145 0 0 / 50%);
+  border-bottom: 1px solid oklch(1 0 0 / 6%);
 }
 
 .site-header__container {
@@ -308,6 +450,13 @@ html[data-language="bn"] input::placeholder {
   padding: 0 1rem;
   max-width: 48rem;
   margin: 0 auto;
+}
+
+@media (min-width: 1280px) {
+  .site-header__container {
+    max-width: 90rem;
+    padding: 0 2rem;
+  }
 }
 
 .site-header__logo {
@@ -361,6 +510,8 @@ html[data-language="bn"] input::placeholder {
 
 .language-toggle__text {
   line-height: 1;
+  min-width: 1.75rem;
+  text-align: center;
 }
 
 /* When English is active, toggle shows "বাং" - use July Font with scaling */
@@ -411,11 +562,12 @@ html[data-language="bn"] .language-toggle__text {
    Main Container
    ======================================== */
 .main-container {
-  min-height: 100vh;
+  flex: 1;
   padding: 1.5rem 1rem;
   padding-top: calc(var(--header-height) + 1.5rem);
   max-width: 48rem;
   margin: 0 auto;
+  width: 100%;
 }
 
 @media (min-width: 640px) {
@@ -425,40 +577,126 @@ html[data-language="bn"] .language-toggle__text {
   }
 }
 
+@media (min-width: 1280px) {
+  .main-container {
+    max-width: 90rem;
+    padding: 2rem 2rem;
+    padding-top: calc(var(--header-height) + 2rem);
+  }
+}
+
 /* ========================================
-   Page Footer
+   Site Footer
    ======================================== */
-.page-footer {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+.site-footer {
+  margin-top: 3rem;
+  padding: 1.5rem 1rem;
   border-top: 1px solid var(--border);
   text-align: center;
 }
 
-.page-footer p {
+.site-footer__container {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 1280px) {
+  .site-footer__container {
+    max-width: 90rem;
+  }
+}
+
+.site-footer__copyright {
   font-size: 0.75rem;
   color: var(--muted-foreground);
-  max-width: 36rem;
-  margin: 0 auto;
 }
 
 /* ========================================
    Tax Calculator Component
    ======================================== */
 .tax-calculator {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1280px) {
+  .tax-calculator {
+    grid-template-columns: 1fr minmax(0, 48rem) 20rem;
+    gap: 2rem;
+  }
+}
+
+.tax-calculator__sidebar--left {
+  display: none;
+}
+
+.tax-calculator__sidebar--right {
+  display: block;
+}
+
+@media (min-width: 1280px) {
+  .tax-calculator__sidebar--left {
+    display: block;
+    /* Empty for now - future content */
+  }
+  
+  .tax-calculator__sidebar--right {
+    position: sticky;
+    top: calc(var(--header-height) + 1.5rem);
+    align-self: start;
+  }
+}
+
+.tax-calculator__main {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+.tax-calculator__note {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-align: center;
+  max-width: 36rem;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
 .tax-calculator__input-card,
 .tax-calculator__result-card,
 .tax-calculator__rates-card {
-  background-color: var(--card);
+  background-color: oklch(1 0 0 / 45%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 2px solid transparent;
+  background-image: 
+    linear-gradient(oklch(1 0 0 / 45%), oklch(1 0 0 / 45%)),
+    linear-gradient(135deg, oklch(1 0 0 / 60%) 0%, oklch(1 0 0 / 20%) 40%, oklch(1 0 0 / 5%) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: none;
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+.dark .tax-calculator__input-card,
+.dark .tax-calculator__result-card,
+.dark .tax-calculator__rates-card {
+  background-color: oklch(0.205 0 0 / 40%);
+  background-image: 
+    linear-gradient(oklch(0.205 0 0 / 40%), oklch(0.205 0 0 / 40%)),
+    linear-gradient(135deg, oklch(1 0 0 / 18%) 0%, oklch(1 0 0 / 6%) 40%, oklch(1 0 0 / 2%) 100%);
+}
+
+.tax-calculator__input-card {
+  gap: 8px;
 }
 
 .tax-calculator__card-title {
   font-size: 1.125rem;
+  line-height: 1.4;
+  min-height: 1.75rem;
 }
 
 .tax-calculator__form {
@@ -482,17 +720,23 @@ html[data-language="bn"] .language-toggle__text {
 .tax-calculator__label {
   font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1.5;
+  min-height: 1.375rem;
 }
 
 .tax-calculator__field-hint {
   font-size: 0.75rem;
   color: var(--muted-foreground);
+  line-height: 1.5;
+  min-height: 1.125rem;
 }
 
 .tax-calculator__breakdown-hint {
   font-size: 0.8125rem;
   color: var(--muted-foreground);
   margin-bottom: 0.25rem;
+  line-height: 1.5;
+  min-height: 1.25rem;
 }
 
 .tax-calculator__input {
@@ -525,8 +769,10 @@ html[data-language="bn"] .language-toggle__text {
   border: none;
   padding: 0;
   text-align: left;
-  transition: color 0.15s ease;
-  order: 2;
+  transition: color 0.15s ease, font-size 0.2s ease;
+  order: 1;
+  line-height: 1.5;
+  min-height: 1.5rem;
 }
 
 @media (min-width: 640px) {
@@ -542,18 +788,33 @@ html[data-language="bn"] .language-toggle__text {
 .tax-calculator__actions {
   display: flex;
   gap: 0.75rem;
-  justify-content: flex-end;
-  order: 1;
+  order: 2;
+  width: 100%;
 }
 
 @media (min-width: 640px) {
   .tax-calculator__actions {
     order: 2;
+    width: auto;
+    justify-content: flex-end;
   }
 }
 
 .tax-calculator__btn {
-  min-width: 6rem;
+  min-height: 48px;
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__btn {
+    flex: none;
+    min-width: 8rem;
+  }
+  
+  .tax-calculator__btn--clear {
+    min-width: 5rem;
+  }
 }
 
 /* ========================================
@@ -593,11 +854,15 @@ html[data-language="bn"] .language-toggle__text {
 .tax-calculator__summary-label {
   font-size: 0.75rem;
   color: var(--muted-foreground);
+  line-height: 1.5;
+  min-height: 1.125rem;
 }
 
 .tax-calculator__summary-value {
   font-size: 1.125rem;
   font-weight: 600;
+  line-height: 1.4;
+  min-height: 1.625rem;
 }
 
 /* ========================================
@@ -611,12 +876,15 @@ html[data-language="bn"] .language-toggle__text {
   font-size: 0.9375rem;
   font-weight: 600;
   margin-bottom: 0.25rem;
+  line-height: 1.4;
+  min-height: 1.375rem;
 }
 
 .tax-calculator__breakdown-note {
   font-size: 0.75rem;
   color: var(--muted-foreground);
   margin-bottom: 0.75rem;
+  line-height: 1.5;
 }
 
 /* ========================================
@@ -624,5 +892,55 @@ html[data-language="bn"] .language-toggle__text {
    ======================================== */
 .tax-calculator__rates-card {
   opacity: 0.85;
+}
+
+.tax-calculator__rates-card [class*="CardContent"] {
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+.tax-calculator__rates-card table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tax-calculator__rates-card table td,
+.tax-calculator__rates-card table th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.tax-calculator__source {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator__source-label {
+  display: block;
+}
+
+.tax-calculator__source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+  word-break: break-word;
+}
+
+.tax-calculator__source-link:hover {
+  color: var(--foreground);
+}
+
+.tax-calculator__source-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
 }
 
