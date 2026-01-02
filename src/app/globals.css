@@ -1,0 +1,591 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --header-height: 3.5rem;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ========================================
+   Default Font (Inter for English)
+   ======================================== */
+:root {
+  --font-scale: 1;
+}
+
+body {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+/* ========================================
+   Bangla Font (July Font) for bn language
+   Scaled 1.2x to match English size
+   ======================================== */
+html[data-language="bn"] {
+  --font-scale: 1.2;
+}
+
+html[data-language="bn"] body,
+html[data-language="bn"] .tax-calculator__card-title,
+html[data-language="bn"] .tax-calculator__label,
+html[data-language="bn"] .tax-calculator__field-hint,
+html[data-language="bn"] .tax-calculator__breakdown-hint,
+html[data-language="bn"] .tax-calculator__toggle-link,
+html[data-language="bn"] .tax-calculator__btn,
+html[data-language="bn"] .tax-calculator__summary-label,
+html[data-language="bn"] .tax-calculator__summary-value,
+html[data-language="bn"] .tax-calculator__breakdown-title,
+html[data-language="bn"] .tax-calculator__breakdown-note,
+html[data-language="bn"] .page-footer p,
+html[data-language="bn"] th,
+html[data-language="bn"] td,
+html[data-language="bn"] .site-header__nav-link {
+  font-family: "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
+}
+
+/* Apply 1.2x scaling to Bangla text elements */
+html[data-language="bn"] .tax-calculator__card-title {
+  font-size: calc(1.125rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__label {
+  font-size: calc(0.875rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__field-hint,
+html[data-language="bn"] .tax-calculator__breakdown-note {
+  font-size: calc(0.75rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__breakdown-hint {
+  font-size: calc(0.8125rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__toggle-link {
+  font-size: calc(0.875rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__btn {
+  font-size: calc(0.875rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__summary-label {
+  font-size: calc(0.75rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__summary-value {
+  font-size: calc(1.125rem * var(--font-scale));
+}
+
+html[data-language="bn"] .tax-calculator__breakdown-title {
+  font-size: calc(0.9375rem * var(--font-scale));
+}
+
+html[data-language="bn"] .page-footer p {
+  font-size: calc(0.75rem * var(--font-scale));
+}
+
+html[data-language="bn"] th,
+html[data-language="bn"] td {
+  font-size: calc(0.875rem * var(--font-scale));
+}
+
+html[data-language="bn"] .site-header__nav-link {
+  font-size: calc(1rem * var(--font-scale));
+}
+
+/* Keep inputs in English Inter font (not scaled) */
+html[data-language="bn"] .tax-calculator__input,
+html[data-language="bn"] input,
+html[data-language="bn"] input::placeholder {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+}
+
+/* ========================================
+   Theme Toggle Animation (Ripple Effect)
+   ======================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: ripple-in 0.5s ease-out;
+}
+
+.dark::view-transition-old(root) {
+  animation: ripple-out 0.5s ease-out;
+}
+
+@keyframes ripple-in {
+  from {
+    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--ripple-radius, 100%) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+}
+
+@keyframes ripple-out {
+  from {
+    clip-path: circle(var(--ripple-radius, 100%) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+  to {
+    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+}
+
+/* ========================================
+   Site Header
+   ======================================== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+  z-index: 50;
+}
+
+.site-header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 1rem;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.site-header__logo {
+  display: flex;
+  align-items: center;
+}
+
+.site-header__logo-image {
+  width: 2rem;
+  height: 2rem;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.site-header__menu-btn {
+  padding: 0.5rem;
+}
+
+/* ========================================
+   Theme Toggle
+   ======================================== */
+.theme-toggle {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.theme-toggle__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* ========================================
+   Language Toggle
+   ======================================== */
+.language-toggle {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  min-width: 2.5rem;
+}
+
+.language-toggle__text {
+  line-height: 1;
+}
+
+.site-header__menu-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.site-header__sheet {
+  padding-top: 1.5rem;
+}
+
+.site-header__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.site-header__nav-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--foreground);
+  border-radius: var(--radius);
+  transition: background-color 0.15s ease;
+}
+
+.site-header__nav-link:hover {
+  background-color: var(--muted);
+}
+
+/* ========================================
+   Main Container
+   ======================================== */
+.main-container {
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+  padding-top: calc(var(--header-height) + 1.5rem);
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .main-container {
+    padding: 2rem 1.5rem;
+    padding-top: calc(var(--header-height) + 2rem);
+  }
+}
+
+/* ========================================
+   Page Footer
+   ======================================== */
+.page-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.page-footer p {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+/* ========================================
+   Tax Calculator Component
+   ======================================== */
+.tax-calculator {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tax-calculator__input-card,
+.tax-calculator__result-card,
+.tax-calculator__rates-card {
+  background-color: var(--card);
+}
+
+.tax-calculator__card-title {
+  font-size: 1.125rem;
+}
+
+.tax-calculator__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tax-calculator__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tax-calculator__breakdown-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.tax-calculator__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tax-calculator__field-hint {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator__breakdown-hint {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.25rem;
+}
+
+.tax-calculator__input {
+  font-size: 1rem;
+  padding: 0.625rem 0.875rem;
+  height: auto;
+}
+
+.tax-calculator__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.tax-calculator__toggle-link {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  transition: color 0.15s ease;
+  order: 2;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__toggle-link {
+    order: 1;
+  }
+}
+
+.tax-calculator__toggle-link:hover {
+  color: var(--foreground);
+}
+
+.tax-calculator__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  order: 1;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__actions {
+    order: 2;
+  }
+}
+
+.tax-calculator__btn {
+  min-width: 6rem;
+}
+
+/* ========================================
+   Tax Calculator Summary
+   ======================================== */
+.tax-calculator__summary {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tax-calculator__summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.875rem;
+  background-color: var(--muted);
+  border-radius: var(--radius);
+}
+
+.tax-calculator__summary-item--highlight {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.tax-calculator__summary-item--highlight .tax-calculator__summary-label {
+  color: var(--primary-foreground);
+  opacity: 0.9;
+}
+
+.tax-calculator__summary-label {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator__summary-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* ========================================
+   Tax Calculator Breakdown
+   ======================================== */
+.tax-calculator__breakdown {
+  margin-top: 1rem;
+}
+
+.tax-calculator__breakdown-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.tax-calculator__breakdown-note {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.75rem;
+}
+
+/* ========================================
+   Tax Rates Reference Card
+   ======================================== */
+.tax-calculator__rates-card {
+  opacity: 0.85;
+}
+
