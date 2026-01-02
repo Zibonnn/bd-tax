@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,6 +48,7 @@ export function TaxCalculator() {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [breakdown, setBreakdown] = useState<SalaryBreakdown>(INITIAL_BREAKDOWN);
   const [result, setResult] = useState<TaxCalculationResult | null>(null);
+  const [showTaxRates, setShowTaxRates] = useState(false);
 
   // Parse numeric value from string
   const parseNumber = (value: string): number => {
@@ -334,186 +336,215 @@ export function TaxCalculator() {
 
       <p className="tax-calculator__note">{t.disclaimer}</p>
 
-      {result && result.annualIncome > 0 && (
-        <Card className="tax-calculator__result-card">
-          <CardHeader>
-            <CardTitle className="tax-calculator__card-title">
-              {t.yourTaxSummary}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="tax-calculator__summary">
-              <div className="tax-calculator__summary-item tax-calculator__summary-item--highlight">
-                <span className="tax-calculator__summary-label">
-                  {t.monthlyTax}
-                </span>
-                <span className="tax-calculator__summary-value">
-                  {formatCurrencyLocalized(monthlyTax, language)}
-                </span>
-              </div>
-              <div className="tax-calculator__summary-item">
-                <span className="tax-calculator__summary-label">
-                  {t.yearlyTax}
-                </span>
-                <span className="tax-calculator__summary-value">
-                  {formatCurrencyLocalized(result.totalTax, language)}
-                </span>
-              </div>
-              <div className="tax-calculator__summary-item">
-                <span className="tax-calculator__summary-label">
-                  {t.effectiveRate}
-                </span>
-                <span className="tax-calculator__summary-value">
-                  {formatRate(result.effectiveRate)}
-                </span>
-              </div>
-            </div>
-
-            {result.breakdown.length > 0 && (
-              <div className="tax-calculator__breakdown">
-                <h3 className="tax-calculator__breakdown-title">
-                  {t.howTaxCalculated}
-                </h3>
-                <p className="tax-calculator__breakdown-note">
-                  {t.basedOnAnnualIncome} {formatCurrencyLocalized(result.annualIncome, language)}
-                </p>
-                
-                {/* Desktop table - hidden on mobile */}
-                <div className="tax-calculator__breakdown-desktop">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t.incomeSlab}</TableHead>
-                        <TableHead className="text-right">{t.amount}</TableHead>
-                        <TableHead className="text-right">{t.rate}</TableHead>
-                        <TableHead className="text-right">{t.tax}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {result.breakdown.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>
-                            {localizedBrackets[index]?.description || item.bracket}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatNumberLocalized(item.taxableAmount, language)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatRate(item.rate)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatNumberLocalized(item.tax, language)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TableCell colSpan={3}>{t.totalYearlyTax}</TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrencyLocalized(result.totalTax, language)}
-                        </TableCell>
-                      </TableRow>
-                    </TableFooter>
-                  </Table>
-                </div>
-
-                {/* Mobile table - 2 columns with stacked data */}
-                <div className="tax-calculator__breakdown-mobile">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>
-                          <span className="tax-calculator__stacked-header">
-                            <span>{t.incomeSlab}</span>
-                            <span className="tax-calculator__stacked-sub">{t.amount}</span>
-                          </span>
-                        </TableHead>
-                        <TableHead className="text-right">
-                          <span className="tax-calculator__stacked-header">
-                            <span>{t.rate}</span>
-                            <span className="tax-calculator__stacked-sub">{t.tax}</span>
-                          </span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {result.breakdown.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>
-                            <span className="tax-calculator__stacked-cell">
-                              <span className="tax-calculator__stacked-primary">
-                                {localizedBrackets[index]?.description || item.bracket}
-                              </span>
-                              <span className="tax-calculator__stacked-secondary">
-                                {formatNumberLocalized(item.taxableAmount, language)}
-                              </span>
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <span className="tax-calculator__stacked-cell tax-calculator__stacked-cell--right">
-                              <span className="tax-calculator__stacked-primary">
-                                {formatRate(item.rate)}
-                              </span>
-                              <span className="tax-calculator__stacked-secondary">
-                                {formatNumberLocalized(item.tax, language)}
-                              </span>
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TableCell>{t.totalYearlyTax}</TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrencyLocalized(result.totalTax, language)}
-                        </TableCell>
-                      </TableRow>
-                    </TableFooter>
-                  </Table>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-      </div>
-
-      <div className="tax-calculator__sidebar tax-calculator__sidebar--right">
+        {/* Tax Rates Card - collapsible */}
         <Card className="tax-calculator__rates-card">
-          <CardHeader>
+          <CardHeader
+            className="tax-calculator__rates-header"
+            onClick={() => setShowTaxRates(!showTaxRates)}
+          >
             <CardTitle className="tax-calculator__card-title">
               {t.taxRates} ({TAX_CONFIG.fiscalYear})
             </CardTitle>
+            <ChevronDown
+              className={`tax-calculator__rates-chevron ${showTaxRates ? "tax-calculator__rates-chevron--open" : ""}`}
+            />
           </CardHeader>
-          <CardContent>
-            <div className="tax-calculator__rates-list">
-              {localizedBrackets.map((bracket, index) => (
-                <div key={index} className="tax-calculator__rates-item">
-                  <span className="tax-calculator__rates-income">
-                    {bracket.description}
+          {showTaxRates && (
+            <CardContent>
+              <div className="tax-calculator__rates-list">
+                {localizedBrackets.map((bracket, index) => (
+                  <div key={index} className="tax-calculator__rates-item">
+                    <span className="tax-calculator__rates-income">
+                      {bracket.description}
+                    </span>
+                    <span className="tax-calculator__rates-rate">
+                      {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="tax-calculator__source">
+                <span className="tax-calculator__source-label">{t.taxRateSourceLabel}</span>
+                <a
+                  href="https://nbr.gov.bd/uploads/news-scroller/Nirdeshika_2025-26.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tax-calculator__source-link"
+                >
+                  {t.taxRateSourceValue}
+                  <ArrowUpRight className="tax-calculator__source-icon" />
+                </a>
+              </p>
+            </CardContent>
+          )}
+        </Card>
+      </div>
+
+      <div className="tax-calculator__sidebar tax-calculator__sidebar--right">
+        {result && result.annualIncome > 0 ? (
+          <Card className="tax-calculator__result-card">
+            <CardHeader>
+              <CardTitle className="tax-calculator__card-title">
+                {t.yourTaxSummary}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="tax-calculator__summary">
+                <div className="tax-calculator__summary-item tax-calculator__summary-item--highlight">
+                  <span className="tax-calculator__summary-label">
+                    {t.monthlyTax}
                   </span>
-                  <span className="tax-calculator__rates-rate">
-                    {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
+                  <span className="tax-calculator__summary-value">
+                    {formatCurrencyLocalized(monthlyTax, language)}
                   </span>
                 </div>
-              ))}
-            </div>
-            <p className="tax-calculator__source">
-              <span className="tax-calculator__source-label">{t.taxRateSourceLabel}</span>
-              <a
-                href="https://nbr.gov.bd/uploads/news-scroller/Nirdeshika_2025-26.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tax-calculator__source-link"
-              >
-                {t.taxRateSourceValue}
-                <ArrowUpRight className="tax-calculator__source-icon" />
-              </a>
-            </p>
-          </CardContent>
-        </Card>
+                <div className="tax-calculator__summary-item">
+                  <span className="tax-calculator__summary-label">
+                    {t.yearlyTax}
+                  </span>
+                  <span className="tax-calculator__summary-value">
+                    {formatCurrencyLocalized(result.totalTax, language)}
+                  </span>
+                </div>
+                <div className="tax-calculator__summary-item">
+                  <span className="tax-calculator__summary-label">
+                    {t.effectiveRate}
+                  </span>
+                  <span className="tax-calculator__summary-value">
+                    {formatRate(result.effectiveRate)}
+                  </span>
+                </div>
+              </div>
+
+              {result.breakdown.length > 0 && (
+                <div className="tax-calculator__breakdown">
+                  <h3 className="tax-calculator__breakdown-title">
+                    {t.howTaxCalculated}
+                  </h3>
+                  <p className="tax-calculator__breakdown-note">
+                    {t.basedOnAnnualIncome} {formatCurrencyLocalized(result.annualIncome, language)}
+                  </p>
+                  
+                  {/* Desktop table - hidden on mobile */}
+                  <div className="tax-calculator__breakdown-desktop">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t.incomeSlab}</TableHead>
+                          <TableHead className="text-right">{t.amount}</TableHead>
+                          <TableHead className="text-right">{t.rate}</TableHead>
+                          <TableHead className="text-right">{t.tax}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {result.breakdown.map((item, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              {localizedBrackets[index]?.description || item.bracket}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatNumberLocalized(item.taxableAmount, language)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatRate(item.rate)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatNumberLocalized(item.tax, language)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TableCell colSpan={3}>{t.totalYearlyTax}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrencyLocalized(result.totalTax, language)}
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </div>
+
+                  {/* Mobile table - 2 columns with stacked data */}
+                  <div className="tax-calculator__breakdown-mobile">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>
+                            <span className="tax-calculator__stacked-header">
+                              <span>{t.incomeSlab}</span>
+                              <span className="tax-calculator__stacked-sub">{t.amount}</span>
+                            </span>
+                          </TableHead>
+                          <TableHead className="text-right">
+                            <span className="tax-calculator__stacked-header">
+                              <span>{t.rate}</span>
+                              <span className="tax-calculator__stacked-sub">{t.tax}</span>
+                            </span>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {result.breakdown.map((item, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <span className="tax-calculator__stacked-cell">
+                                <span className="tax-calculator__stacked-primary">
+                                  {localizedBrackets[index]?.description || item.bracket}
+                                </span>
+                                <span className="tax-calculator__stacked-secondary">
+                                  {formatNumberLocalized(item.taxableAmount, language)}
+                                </span>
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <span className="tax-calculator__stacked-cell tax-calculator__stacked-cell--right">
+                                <span className="tax-calculator__stacked-primary">
+                                  {formatRate(item.rate)}
+                                </span>
+                                <span className="tax-calculator__stacked-secondary">
+                                  {formatNumberLocalized(item.tax, language)}
+                                </span>
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TableCell>{t.totalYearlyTax}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrencyLocalized(result.totalTax, language)}
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="tax-calculator__empty-card">
+            <CardContent>
+              <div className="tax-calculator__empty-state">
+                <Image
+                  src="/Assets/illus/empty_state.svg"
+                  alt=""
+                  width={132}
+                  height={142}
+                  className="tax-calculator__empty-illustration"
+                />
+                <h3 className="tax-calculator__empty-title">
+                  {t.resultsWillAppearHere}
+                </h3>
+                <p className="tax-calculator__empty-text">
+                  {t.enterSalaryToCalculate}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

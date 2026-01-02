@@ -126,110 +126,6 @@
 }
 
 /* ========================================
-   Background Decorative Circles
-   ======================================== */
-.bg-circles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.06;
-}
-
-.dark .bg-circles {
-  opacity: 0.04;
-}
-
-.bg-circle {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-}
-
-/* Circle 1 - Large pink/magenta */
-.bg-circle--1 {
-  width: 1000px;
-  height: 1000px;
-  background: oklch(0.7 0.2 340);
-  top: -10%;
-  left: -10%;
-}
-
-/* Circle 2 - Medium cyan/teal */
-.bg-circle--2 {
-  width: 800px;
-  height: 800px;
-  background: oklch(0.75 0.15 190);
-  top: 20%;
-  right: -15%;
-}
-
-/* Circle 3 - Large purple/violet */
-.bg-circle--3 {
-  width: 1200px;
-  height: 1200px;
-  background: oklch(0.65 0.18 280);
-  bottom: -15%;
-  left: 30%;
-}
-
-/* Circle 4 - Small orange/amber */
-.bg-circle--4 {
-  width: 600px;
-  height: 600px;
-  background: oklch(0.8 0.18 70);
-  top: 50%;
-  left: -5%;
-}
-
-/* Circle 5 - Medium green/emerald */
-.bg-circle--5 {
-  width: 700px;
-  height: 700px;
-  background: oklch(0.7 0.15 150);
-  top: 5%;
-  right: 20%;
-}
-
-/* Circle 6 - Small blue */
-.bg-circle--6 {
-  width: 500px;
-  height: 500px;
-  background: oklch(0.65 0.2 250);
-  bottom: 25%;
-  right: 5%;
-}
-
-/* Dark mode - slightly adjusted colors for contrast */
-.dark .bg-circle--1 {
-  background: oklch(0.55 0.22 340);
-}
-
-.dark .bg-circle--2 {
-  background: oklch(0.5 0.18 190);
-}
-
-.dark .bg-circle--3 {
-  background: oklch(0.45 0.2 280);
-}
-
-.dark .bg-circle--4 {
-  background: oklch(0.55 0.2 70);
-}
-
-.dark .bg-circle--5 {
-  background: oklch(0.45 0.18 150);
-}
-
-.dark .bg-circle--6 {
-  background: oklch(0.45 0.22 250);
-}
-
-/* ========================================
    Typography - English
    General Sans for titles, Inter for body
    ======================================== */
@@ -695,8 +591,9 @@ html[data-language="bn"] .language-toggle__text {
 @media (min-width: 1280px) {
   .tax-calculator {
     display: grid;
-    grid-template-columns: 1fr minmax(0, 48rem) 20rem;
+    grid-template-columns: 0 3fr 2fr; /* Left: hidden, Main: 60%, Right: 40% */
     gap: 2rem;
+    align-items: start; /* Align columns to top */
   }
 }
 
@@ -717,8 +614,6 @@ html[data-language="bn"] .language-toggle__text {
   }
   
   .tax-calculator__sidebar--right {
-    position: sticky;
-    top: calc(var(--header-height) + 1.5rem);
     align-self: start;
     width: auto;
   }
@@ -1034,6 +929,7 @@ html[data-language="bn"] .language-toggle__text {
    ======================================== */
 .tax-calculator__breakdown {
   margin-top: 1rem;
+  width: 100%;
 }
 
 .tax-calculator__breakdown-title {
@@ -1069,6 +965,7 @@ html[data-language="bn"] .language-toggle__text {
 /* Mobile table - show on smaller screens */
 .tax-calculator__breakdown-mobile {
   display: block;
+  width: 100%;
 }
 
 @media (min-width: 640px) {
@@ -1081,29 +978,25 @@ html[data-language="bn"] .language-toggle__text {
 .tax-calculator__breakdown [data-slot="table-container"] {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -1rem;
-  padding: 0 1rem;
-}
-
-@media (min-width: 480px) {
-  .tax-calculator__breakdown [data-slot="table-container"] {
-    margin: 0 -1.5rem;
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .tax-calculator__breakdown [data-slot="table-container"] {
-    margin: 0;
-    padding: 0;
-    overflow-x: visible;
-  }
+  width: 100%;
 }
 
 .tax-calculator__breakdown table {
   width: 100%;
   min-width: 100%;
+  table-layout: fixed;
+}
+
+/* Mobile table uses auto layout for better content fitting */
+.tax-calculator__breakdown-mobile table {
   table-layout: auto;
+}
+
+/* Desktop table can use fixed layout */
+@media (min-width: 640px) {
+  .tax-calculator__breakdown-desktop table {
+    table-layout: auto;
+  }
 }
 
 /* ----------------------------------------
@@ -1150,12 +1043,23 @@ html[data-language="bn"] .language-toggle__text {
   vertical-align: top;
 }
 
+.tax-calculator__breakdown-mobile [data-slot="table-head"]:first-child,
+.tax-calculator__breakdown-mobile [data-slot="table-cell"]:first-child {
+  width: 65%;
+}
+
+.tax-calculator__breakdown-mobile [data-slot="table-head"]:last-child,
+.tax-calculator__breakdown-mobile [data-slot="table-cell"]:last-child {
+  width: 35%;
+}
+
 .tax-calculator__breakdown-mobile [data-slot="table-head"] {
   padding-bottom: 0.625rem;
 }
 
 .tax-calculator__breakdown-mobile table {
   font-size: 0.8125rem;
+  width: 100%;
 }
 
 @media (min-width: 480px) {
@@ -1191,6 +1095,31 @@ html[data-language="bn"] .language-toggle__text {
    ======================================== */
 .tax-calculator__rates-card {
   opacity: 0.85;
+}
+
+.tax-calculator__rates-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tax-calculator__rates-header:hover {
+  opacity: 0.8;
+}
+
+.tax-calculator__rates-chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tax-calculator__rates-chevron--open {
+  transform: rotate(180deg);
 }
 
 .tax-calculator__rates-card [class*="CardContent"] {
@@ -1247,6 +1176,23 @@ html[data-language="bn"] .language-toggle__text {
   }
 }
 
+/* Grid layout for rates list on larger screens */
+@media (min-width: 640px) {
+  .tax-calculator__rates-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 1.5rem;
+  }
+  
+  .tax-calculator__rates-item {
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .tax-calculator__rates-item:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+}
+
 @media (min-width: 1280px) {
   .tax-calculator__rates-item {
     gap: 1rem;
@@ -1285,5 +1231,55 @@ html[data-language="bn"] .language-toggle__text {
   width: 0.875rem;
   height: 0.875rem;
   flex-shrink: 0;
+}
+
+/* ========================================
+   Empty State Card
+   ======================================== */
+.tax-calculator__empty-card {
+  background-color: oklch(1 0 0 / 45%);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 2px solid transparent;
+  box-shadow: none;
+  border-radius: 1rem;
+}
+
+.dark .tax-calculator__empty-card {
+  background-color: oklch(0.205 0 0 / 40%);
+}
+
+.tax-calculator__empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  min-height: 280px;
+}
+
+.tax-calculator__empty-illustration {
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+
+.dark .tax-calculator__empty-illustration {
+  opacity: 0.5;
+  filter: brightness(0.9);
+}
+
+.tax-calculator__empty-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+.tax-calculator__empty-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  max-width: 280px;
+  line-height: 1.5;
 }
 

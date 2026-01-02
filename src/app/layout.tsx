@@ -45,17 +45,25 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/Taraldinn/soroborno-cdn@main/public/fonts/Shurjo/font.css"
           rel="stylesheet"
         />
+        {/* Prevent theme flash by applying theme before React hydrates */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        {/* Background decorative circles */}
-        <div className="bg-circles" aria-hidden="true">
-          <div className="bg-circle bg-circle--1" />
-          <div className="bg-circle bg-circle--2" />
-          <div className="bg-circle bg-circle--3" />
-          <div className="bg-circle bg-circle--4" />
-          <div className="bg-circle bg-circle--5" />
-          <div className="bg-circle bg-circle--6" />
-        </div>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

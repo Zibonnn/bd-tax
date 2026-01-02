@@ -43,6 +43,10 @@ export interface Translations {
   taxRateSourceLabel: string;
   taxRateSourceValue: string;
 
+  // Empty State
+  resultsWillAppearHere: string;
+  enterSalaryToCalculate: string;
+
   // Footer
   disclaimer: string;
   footerCopyright: string;
@@ -92,6 +96,10 @@ export const translations: Record<Language, Translations> = {
     taxRateSourceLabel: "Source:",
     taxRateSourceValue: "NBR Tax Guidelines 2025-26, p 8-9",
 
+    // Empty State
+    resultsWillAppearHere: "Your Results",
+    enterSalaryToCalculate: "Enter your salary and click Calculate Tax to see your tax breakdown here.",
+
     // Footer
     disclaimer:
       "Disclaimer: This calculator provides estimates only. Please consult a tax professional for accurate tax advice.",
@@ -139,6 +147,10 @@ export const translations: Record<Language, Translations> = {
     taxFree: "করমুক্ত",
     taxRateSourceLabel: "সূত্র:",
     taxRateSourceValue: "এনবিআর আয়কর নির্দেশিকা ২০২৫-২৬, পৃষ্ঠা ৮-৯",
+
+    // Empty State
+    resultsWillAppearHere: "আপনার ফলাফল",
+    enterSalaryToCalculate: "আপনার বেতন লিখুন এবং কর হিসাব করুন বাটনে ক্লিক করুন।",
 
     // Footer
     disclaimer:
