@@ -128,6 +128,7 @@
 /* ========================================
    Typography - English
    General Sans for titles, Inter for body
+   ALWAYS applied regardless of language setting
    ======================================== */
 :root {
   --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
@@ -142,29 +143,106 @@ body {
   flex-direction: column;
 }
 
-/* English headings use General Sans */
+/* English headings use General Sans - ALWAYS, regardless of language */
 h1, h2, h3, h4, h5, h6,
 .tax-calculator__card-title,
 .tax-calculator__breakdown-title,
-.tax-calculator__summary-value {
-  font-family: var(--font-heading);
+.tax-calculator__summary-value,
+.tax-calculator-new__title,
+.tax-calculator-new__step-title,
+.tax-calculator-new__basic-salary-title,
+.tax-calculator-new__exemptions-title,
+.tax-calculator-new__investment-title,
+.tax-calculator-new__results-title,
+.tax-calculator-new__tax-breakdown-title,
+.tax-calculator-new__slabs-title,
+.tax-calculator-new__rates-title {
+  font-family: "General Sans", var(--font-inter), system-ui, sans-serif !important;
+}
+
+/* English body text uses Inter - ALWAYS, regardless of language */
+/* This ensures English text is never scaled, even in Bangla mode */
+body,
+p,
+span,
+label,
+button,
+li,
+td,
+th,
+.tax-calculator__label,
+.tax-calculator__field-hint,
+.tax-calculator__breakdown-hint,
+.tax-calculator__toggle-link,
+.tax-calculator__btn,
+.tax-calculator__summary-label,
+.tax-calculator__breakdown-note,
+.tax-calculator-new__step-label,
+.tax-calculator-new__step-description,
+.tax-calculator-new__stat-label,
+.tax-calculator-new__mode-label,
+.tax-calculator-new__income-label,
+.tax-calculator-new__structure-hint,
+.tax-calculator-new__salary-label,
+.tax-calculator-new__exemption-description,
+.tax-calculator-new__subtitle,
+.tax-calculator-new__results-subtitle,
+.tax-calculator-new__badge,
+.tax-calculator-new__step-number,
+.tax-calculator-new p,
+.tax-calculator-new label,
+.tax-calculator-new span,
+.tax-calculator-new button,
+.tax-calculator-new li,
+.tax-calculator-new td,
+.tax-calculator-new th {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+  font-size: 1em !important;
+  line-height: 1.5 !important;
+}
+
+/* English number displays - NEVER scaled, always Inter */
+.tax-calculator-new__net-pay-value,
+.tax-calculator-new__stat-value,
+.tax-calculator-new__breakdown-value,
+.tax-calculator-new__slab-tax,
+.tax-calculator-new__tax-segment-amount,
+.tax-calculator-new__tax-segment-percentage,
+.tax-calculator-new__effective-rate-value,
+.tax-calculator-new__exemption-value,
+.tax-calculator-new__total-exemption-value,
+.tax-calculator-new__rebate-applied-value,
+.tax-calculator-new__rebate-breakdown-amount,
+.tax-calculator-new__basic-salary-amount,
+.tax-calculator-new__investment-max-value {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+  font-size: 1em !important;
+  line-height: 1.5 !important;
 }
 
 /* ========================================
    Typography - Bangla
-   Shurjo for titles, July for body
-   Scaled 1.2x to match English size
+   July Bold for titles, July for body
+   Scaled 1.125x to match English size
    ======================================== */
 :root[data-language="bn"],
 html[data-language="bn"] {
   --font-body: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
-  --font-heading: "Shurjo Bold", "Shurjo", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
-  --font-scale: 1.2;
+  --font-heading: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
+  --font-scale: 1.125;
 }
 
-/* Bangla body text uses July Font */
-html[data-language="bn"] body,
-html[data-language="bn"] .tax-calculator__label,
+/* ========================================
+   Typography - Bangla Overrides
+   Only apply July/Shurjo fonts to Bangla text
+   Use rem units to avoid double-scaling
+   Fix line-height to prevent UI growth
+   ======================================== */
+
+/* Bangla body text uses July Font - ONLY when language is Bangla */
+/* Use rem units with 1.125x scaling, fix line-height to match Inter */
+/* Exclude English-only elements (badges, step numbers, etc.) */
+html[data-language="bn"] .tax-calculator__label:not(.tax-calculator-new__badge):not(.tax-calculator-new__step-number),
 html[data-language="bn"] .tax-calculator__field-hint,
 html[data-language="bn"] .tax-calculator__breakdown-hint,
 html[data-language="bn"] .tax-calculator__toggle-link,
@@ -175,10 +253,59 @@ html[data-language="bn"] .page-footer p,
 html[data-language="bn"] th,
 html[data-language="bn"] td,
 html[data-language="bn"] .site-header__nav-link {
-  font-family: "JulyFont", "July Font", "Noto Sans Bengali", "Inter", system-ui, sans-serif;
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", "Inter", system-ui, sans-serif !important;
+  font-size: calc(1rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-/* Bangla titles use Shurjo */
+/* New tax calculator text elements - Bangla only */
+/* Use rem units to avoid double-scaling, fix line-height */
+/* Exclude English-only elements (badges, step numbers, number displays) */
+html[data-language="bn"] .tax-calculator-new__step-label,
+html[data-language="bn"] .tax-calculator-new__step-description,
+html[data-language="bn"] .tax-calculator-new__stat-label,
+html[data-language="bn"] .tax-calculator-new__mode-label,
+html[data-language="bn"] .tax-calculator-new__income-label,
+html[data-language="bn"] .tax-calculator-new__slider-labels,
+html[data-language="bn"] .tax-calculator-new__structure-hint,
+html[data-language="bn"] .tax-calculator-new__salary-label,
+html[data-language="bn"] .tax-calculator-new__basic-salary-hint,
+html[data-language="bn"] .tax-calculator-new__basic-salary-labels,
+html[data-language="bn"] .tax-calculator-new__exemption-title,
+html[data-language="bn"] .tax-calculator-new__exemption-description,
+html[data-language="bn"] .tax-calculator-new__total-exemption-label,
+html[data-language="bn"] .tax-calculator-new__rebate-hint,
+html[data-language="bn"] .tax-calculator-new__investment-item-label,
+html[data-language="bn"] .tax-calculator-new__investment-hint,
+html[data-language="bn"] .tax-calculator-new__investment-max-label,
+html[data-language="bn"] .tax-calculator-new__rebate-applied-label,
+html[data-language="bn"] .tax-calculator-new__rebate-applied-hint,
+html[data-language="bn"] .tax-calculator-new__net-pay-label,
+html[data-language="bn"] .tax-calculator-new__tax-segment-label,
+html[data-language="bn"] .tax-calculator-new__breakdown-label,
+html[data-language="bn"] .tax-calculator-new__slab-description,
+html[data-language="bn"] .tax-calculator-new__effective-rate-label,
+html[data-language="bn"] .tax-calculator-new__effective-rate-hint,
+html[data-language="bn"] .tax-calculator-new__help-text,
+html[data-language="bn"] .tax-calculator-new__source-label,
+html[data-language="bn"] .tax-calculator-new__footer-text,
+html[data-language="bn"] .tax-calculator-new__subtitle,
+html[data-language="bn"] .tax-calculator-new__results-subtitle,
+html[data-language="bn"] .tax-calculator-new p:not(.tax-calculator-new__badge):not(.tax-calculator-new__step-number),
+html[data-language="bn"] .tax-calculator-new label:not(.tax-calculator-new__badge):not(.tax-calculator-new__step-number),
+html[data-language="bn"] .tax-calculator-new button:not(input):not(.tax-calculator-new__badge):not(.tax-calculator-new__step-number),
+html[data-language="bn"] .tax-calculator-new span:not(input span):not(.tax-calculator-new__badge):not(.tax-calculator-new__step-number):not(.tax-calculator-new__net-pay-value):not(.tax-calculator-new__stat-value):not(.tax-calculator-new__breakdown-value),
+html[data-language="bn"] .tax-calculator-new li,
+html[data-language="bn"] .tax-calculator-new td:not(input),
+html[data-language="bn"] .tax-calculator-new th {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", "Inter", system-ui, sans-serif !important;
+  font-size: calc(1rem * 1.125) !important;
+  line-height: 1.3 !important;
+}
+
+/* Bangla titles use July Bold - ONLY when language is Bangla */
+/* Scale by 1.125x to match General Sans visual size */
+/* Use rem units based on actual font sizes to avoid double-scaling */
 html[data-language="bn"] h1,
 html[data-language="bn"] h2,
 html[data-language="bn"] h3,
@@ -188,54 +315,134 @@ html[data-language="bn"] h6,
 html[data-language="bn"] .tax-calculator__card-title,
 html[data-language="bn"] .tax-calculator__breakdown-title,
 html[data-language="bn"] .tax-calculator__summary-value {
-  font-family: "Shurjo Bold", "Shurjo", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif;
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: calc(1em * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-/* Apply 1.2x scaling to Bangla text elements (excluding Shurjo headings) */
-html[data-language="bn"] .tax-calculator__label {
-  font-size: calc(0.875rem * var(--font-scale));
+/* Scale specific title classes based on their base rem sizes */
+html[data-language="bn"] .tax-calculator-new__title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: calc(1.5rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .tax-calculator__field-hint,
-html[data-language="bn"] .tax-calculator__breakdown-note {
-  font-size: calc(0.75rem * var(--font-scale));
+html[data-language="bn"] .tax-calculator-new__step-title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: calc(1.125rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .tax-calculator__breakdown-hint {
-  font-size: calc(0.8125rem * var(--font-scale));
+html[data-language="bn"] .tax-calculator-new__results-title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: calc(1.25rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .tax-calculator__toggle-link {
-  font-size: calc(0.875rem * var(--font-scale));
+html[data-language="bn"] .tax-calculator-new__basic-salary-title,
+html[data-language="bn"] .tax-calculator-new__exemptions-title,
+html[data-language="bn"] .tax-calculator-new__investment-title,
+html[data-language="bn"] .tax-calculator-new__rates-title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: calc(1rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .tax-calculator__btn {
-  font-size: calc(0.875rem * var(--font-scale));
-  font-weight: bold;
+html[data-language="bn"] .tax-calculator-new__tax-breakdown-title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: calc(0.875rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .tax-calculator__summary-label {
-  font-size: calc(0.75rem * var(--font-scale));
+html[data-language="bn"] .tax-calculator-new__slabs-title {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: calc(0.75rem * 1.125) !important;
+  line-height: 1.3 !important;
 }
 
-html[data-language="bn"] .page-footer p {
-  font-size: calc(0.75rem * var(--font-scale));
-}
-
-html[data-language="bn"] th,
-html[data-language="bn"] td {
-  font-size: calc(0.875rem * var(--font-scale));
-}
-
-html[data-language="bn"] .site-header__nav-link {
-  font-size: calc(1rem * var(--font-scale));
-}
+/* Old granular rules removed - now using central rule above */
+/* All July font text inherits 1.125x scaling from html[data-language="bn"] */
 
 /* Keep inputs in English Inter font (not scaled) */
 html[data-language="bn"] .tax-calculator__input,
 html[data-language="bn"] input,
 html[data-language="bn"] input::placeholder {
   font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+}
+
+/* All numeric input fields always use Inter font for English number input */
+.tax-calculator-new__income-input,
+.tax-calculator-new__salary-input,
+.tax-calculator-new__investment-item-input {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+}
+
+/* Number displays: July font for Bangla numbers, Inter for English numbers */
+/* Use rem units to avoid double-scaling, then apply 1.125x scaling */
+html[data-language="bn"] .tax-calculator-new__net-pay-value {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-size: calc(2.5rem * 1.125) !important;
+  line-height: 1.3 !important;
+}
+
+@media (min-width: 640px) {
+  html[data-language="bn"] .tax-calculator-new__net-pay-value {
+    font-size: calc(3rem * 1.125) !important;
+    line-height: 1.3 !important;
+  }
+}
+
+/* Bangla number displays - use rem units to avoid double-scaling */
+html[data-language="bn"] .tax-calculator-new__stat-value,
+html[data-language="bn"] .tax-calculator-new__breakdown-value,
+html[data-language="bn"] .tax-calculator-new__slab-tax,
+html[data-language="bn"] .tax-calculator-new__tax-segment-amount,
+html[data-language="bn"] .tax-calculator-new__tax-segment-percentage,
+html[data-language="bn"] .tax-calculator-new__effective-rate-value,
+html[data-language="bn"] .tax-calculator-new__exemption-value,
+html[data-language="bn"] .tax-calculator-new__total-exemption-value,
+html[data-language="bn"] .tax-calculator-new__rebate-applied-value,
+html[data-language="bn"] .tax-calculator-new__rebate-breakdown-amount,
+html[data-language="bn"] .tax-calculator-new__basic-salary-amount,
+html[data-language="bn"] .tax-calculator-new__investment-max-value {
+  font-family: "JulyFont", "July Font", "Noto Sans Bengali", var(--font-inter), system-ui, sans-serif !important;
+  font-size: calc(1rem * 1.125) !important;
+  line-height: 1.3 !important;
+}
+
+/* English numbers use Inter font */
+/* Ensure net-pay-value is large in English too */
+html:not([data-language="bn"]) .tax-calculator-new__net-pay-value {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif !important;
+  font-size: 2.5rem !important;
+}
+
+@media (min-width: 640px) {
+  html:not([data-language="bn"]) .tax-calculator-new__net-pay-value {
+    font-size: 3rem !important;
+  }
+}
+
+html:not([data-language="bn"]) .tax-calculator-new__stat-value,
+html:not([data-language="bn"]) .tax-calculator-new__breakdown-value,
+html:not([data-language="bn"]) .tax-calculator-new__slab-tax,
+html:not([data-language="bn"]) .tax-calculator-new__tax-segment-amount,
+html:not([data-language="bn"]) .tax-calculator-new__tax-segment-percentage,
+html:not([data-language="bn"]) .tax-calculator-new__effective-rate-value,
+html:not([data-language="bn"]) .tax-calculator-new__exemption-value,
+html:not([data-language="bn"]) .tax-calculator-new__total-exemption-value,
+html:not([data-language="bn"]) .tax-calculator-new__rebate-applied-value,
+html:not([data-language="bn"]) .tax-calculator-new__rebate-breakdown-amount,
+html:not([data-language="bn"]) .tax-calculator-new__basic-salary-amount,
+html:not([data-language="bn"]) .tax-calculator-new__investment-max-value {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
 }
 
 /* ========================================
@@ -1281,5 +1488,1405 @@ html[data-language="bn"] .language-toggle__text {
   color: var(--muted-foreground);
   max-width: 280px;
   line-height: 1.5;
+}
+
+/* ========================================
+   Tax Calculator New UI (Redesigned)
+   ======================================== */
+.tax-calculator-new {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+/* No special grid needed - main handles its own grid */
+
+.tax-calculator-new__header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tax-calculator-new__header-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .tax-calculator-new__header-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.tax-calculator-new__header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tax-calculator-new__icon-wrapper {
+  background: var(--primary);
+  padding: 0.75rem;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.2);
+}
+
+.dark .tax-calculator-new__icon-wrapper {
+  box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.3);
+}
+
+.tax-calculator-new__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--primary-foreground);
+}
+
+.tax-calculator-new__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.tax-calculator-new__badge {
+  font-size: 0.75rem;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.tax-calculator-new__subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+  margin: 0;
+}
+
+.tax-calculator-new__steps {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .tax-calculator-new__steps {
+    display: flex;
+  }
+}
+
+.tax-calculator-new__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tax-calculator-new__step:hover {
+  opacity: 0.8;
+}
+
+.tax-calculator-new__step--active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.tax-calculator-new__step-number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+}
+
+.tax-calculator-new__step--active .tax-calculator-new__step-number {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.3);
+}
+
+.tax-calculator-new__step-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator-new__stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tax-calculator-new__stat-card {
+  background-color: var(--card);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+
+.tax-calculator-new__stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator-new__stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__stat-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+.tax-calculator-new__stat-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--primary);
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.tax-calculator-new__main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .tax-calculator-new__main {
+    grid-template-columns: 7fr 5fr;
+    gap: 2rem;
+  }
+}
+
+.tax-calculator-new__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tax-calculator-new__step-card {
+  background-color: var(--card);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.tax-calculator-new__step-card--active {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.1);
+}
+
+.dark .tax-calculator-new__step-card--active {
+  box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.2);
+}
+
+.tax-calculator-new__step-toggle {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tax-calculator-new__step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tax-calculator-new__step-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__step-icon-wrapper {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  background-color: var(--muted);
+  transition: all 0.2s ease;
+}
+
+.tax-calculator-new__step-icon-wrapper--active {
+  background-color: var(--primary);
+}
+
+.tax-calculator-new__step-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
+  transition: color 0.2s ease;
+}
+
+.tax-calculator-new__step-icon--active {
+  color: var(--primary-foreground);
+}
+
+.tax-calculator-new__step-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__step-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0.25rem 0 0 0;
+}
+
+.tax-calculator-new__mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__mode-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__toggle-group {
+  display: flex;
+  background-color: var(--muted);
+  border-radius: var(--radius);
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.tax-calculator-new__toggle-btn {
+  flex: 1;
+  min-width: 0;
+}
+
+.tax-calculator-new__chevron {
+  display: flex;
+  align-items: center;
+}
+
+.tax-calculator-new__chevron-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__income-input-wrapper {
+  margin-bottom: 2rem;
+}
+
+.tax-calculator-new__income-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  margin-bottom: 0.75rem;
+}
+
+.tax-calculator-new__income-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tax-calculator-new__currency-symbol {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.875rem;
+  font-weight: 300;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.tax-calculator-new__income-input {
+  width: 100%;
+  padding-left: 3.5rem;
+  padding-right: 6rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  background-color: var(--muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-xl);
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.tax-calculator-new__income-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--card);
+  box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 0.1);
+}
+
+.dark .tax-calculator-new__income-input:focus {
+  box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 0.2);
+}
+
+.tax-calculator-new__income-suffix {
+  position: absolute;
+  right: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.tax-calculator-new__slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__slider-label-center {
+  font-weight: 600;
+}
+
+.tax-calculator-new__slider {
+  width: 100%;
+  height: 0.75rem;
+  background: linear-gradient(to right, var(--primary), var(--primary));
+  background-size: 100% 100%;
+  border-radius: 9999px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tax-calculator-new__slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--card);
+  border: 4px solid var(--primary);
+  box-shadow: 0 2px 8px oklch(0 0 0 / 0.2);
+  cursor: pointer;
+}
+
+.tax-calculator-new__slider::-moz-range-thumb {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--card);
+  border: 4px solid var(--primary);
+  box-shadow: 0 2px 8px oklch(0 0 0 / 0.2);
+  cursor: pointer;
+}
+
+.tax-calculator-new__quick-amounts {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tax-calculator-new__quick-amount-btn {
+  flex: 1;
+}
+
+.tax-calculator-new__structure-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tax-calculator-new__structure-hint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0 0 1rem 0;
+}
+
+.tax-calculator-new__salary-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tax-calculator-new__salary-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__salary-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.tax-calculator-new__salary-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tax-calculator-new__salary-currency {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.tax-calculator-new__salary-input {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.tax-calculator-new__basic-salary-card {
+  background: var(--muted);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.tax-calculator-new__basic-salary-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.tax-calculator-new__basic-salary-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.tax-calculator-new__basic-salary-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary);
+}
+
+.tax-calculator-new__basic-salary-hint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__basic-salary-value {
+  text-align: right;
+}
+
+.tax-calculator-new__basic-salary-percent {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.tax-calculator-new__basic-salary-amount {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__basic-salary-slider {
+  width: 100%;
+  height: 0.5rem;
+  background: linear-gradient(to right, var(--primary), var(--primary));
+  border-radius: 9999px;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.tax-calculator-new__basic-salary-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--card);
+  border: 4px solid var(--primary);
+  cursor: pointer;
+}
+
+.tax-calculator-new__basic-salary-slider::-moz-range-thumb {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--card);
+  border: 4px solid var(--primary);
+  cursor: pointer;
+}
+
+.tax-calculator-new__basic-salary-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__exemptions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tax-calculator-new__exemptions-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 1rem 0;
+}
+
+.tax-calculator-new__exemptions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator-new__exemptions-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tax-calculator-new__exemption-card {
+  background-color: var(--muted);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+
+.tax-calculator-new__exemption-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.tax-calculator-new__exemption-icon-wrapper {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  background-color: var(--card);
+}
+
+.tax-calculator-new__exemption-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+.tax-calculator-new__exemption-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__exemption-description {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__exemption-value {
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  width: 100%;
+}
+
+.tax-calculator-new__total-exemption {
+  background-color: var(--muted);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+}
+
+.tax-calculator-new__total-exemption-label {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.tax-calculator-new__total-exemption-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+.tax-calculator-new__rebate-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tax-calculator-new__rebate-hint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0 0 1rem 0;
+}
+
+.tax-calculator-new__investments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tax-calculator-new__investment-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--muted);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.tax-calculator-new__investment-item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator-new__investment-item-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tax-calculator-new__investment-item-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator-new__investment-item-category {
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.tax-calculator-new__investment-item-limit {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__investment-item-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tax-calculator-new__investment-item-currency {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.tax-calculator-new__investment-item-input {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+}
+
+.tax-calculator-new__rebate-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.tax-calculator-new__rebate-breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.tax-calculator-new__rebate-breakdown-name {
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__rebate-breakdown-amount {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.tax-calculator-new__investment-card {
+  background: var(--muted);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.tax-calculator-new__investment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.tax-calculator-new__investment-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.25rem 0;
+}
+
+.tax-calculator-new__investment-hint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__investment-max {
+  text-align: right;
+}
+
+.tax-calculator-new__investment-max-label {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__investment-max-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.tax-calculator-new__investment-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tax-calculator-new__investment-currency {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.25rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.tax-calculator-new__investment-input {
+  width: 100%;
+  padding-left: 3rem;
+  padding-right: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.tax-calculator-new__investment-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px oklch(from var(--primary) l c h / 0.1);
+}
+
+.tax-calculator-new__investment-quick {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__investment-quick-btn {
+  flex: 1;
+}
+
+.tax-calculator-new__rebate-applied {
+  background: var(--muted);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  border: 2px solid var(--primary);
+}
+
+.tax-calculator-new__rebate-applied-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tax-calculator-new__rebate-applied-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__rebate-applied-label {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.tax-calculator-new__rebate-applied-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.tax-calculator-new__rebate-applied-hint {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__right {
+  position: relative;
+}
+
+.tax-calculator-new__results-sticky {
+  position: sticky;
+  top: calc(var(--header-height) + 1rem);
+}
+
+.tax-calculator-new__results-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -1px oklch(0 0 0 / 0.06);
+}
+
+.dark .tax-calculator-new__results-card {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: 0 10px 15px -3px oklch(0 0 0 / 0.3), 0 4px 6px -2px oklch(0 0 0 / 0.2);
+}
+
+.tax-calculator-new__results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tax-calculator-new__results-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__results-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--primary);
+}
+
+.tax-calculator-new__results-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--card-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__results-badge {
+  font-size: 0.75rem;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.tax-calculator-new__results-subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__results-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tax-calculator-new__net-pay {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--muted);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+}
+
+.tax-calculator-new__net-pay-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  margin: 0 0 0.5rem 0;
+}
+
+.tax-calculator-new__net-pay-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator-new__net-pay-value {
+    font-size: 3rem;
+  }
+}
+
+.dark .tax-calculator-new__net-pay-value {
+  color: var(--primary);
+}
+
+.tax-calculator-new__net-pay-secondary {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__tax-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tax-calculator-new__tax-breakdown-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.tax-calculator-new__tax-segments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__tax-segment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tax-calculator-new__tax-segment-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tax-calculator-new__tax-segment-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: var(--muted-foreground);
+  opacity: 0.3;
+}
+
+.tax-calculator-new__tax-segment-label {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.tax-calculator-new__tax-segment-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__tax-segment-right {
+  text-align: right;
+}
+
+.tax-calculator-new__tax-segment-amount {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+.tax-calculator-new__tax-segment-percentage {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__tax-bar {
+  height: 0.75rem;
+  background-color: var(--muted);
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+}
+
+.tax-calculator-new__tax-bar-segment {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.tax-calculator-new__tax-bar-segment--tax {
+  background-color: var(--destructive);
+}
+
+.tax-calculator-new__tax-bar-segment--net {
+  background-color: var(--primary);
+}
+
+.tax-calculator-new__detailed-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.tax-calculator-new__breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.tax-calculator-new__breakdown-row--bold {
+  font-weight: 600;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.tax-calculator-new__breakdown-row--final {
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.tax-calculator-new__breakdown-label {
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__breakdown-value {
+  font-weight: 500;
+  color: var(--foreground);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+.tax-calculator-new__breakdown-value--positive {
+  color: var(--primary);
+}
+
+.tax-calculator-new__breakdown-value--final {
+  color: var(--destructive);
+}
+
+.tax-calculator-new__slabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__slabs-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin: 0 0 0.5rem 0;
+}
+
+.tax-calculator-new__slab-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.tax-calculator-new__slab-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__slab-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--muted-foreground);
+  opacity: 0.4;
+}
+
+.tax-calculator-new__slab-description {
+  color: var(--foreground);
+}
+
+.tax-calculator-new__slab-rate {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.tax-calculator-new__slab-tax {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__slab-tax--active {
+  color: var(--foreground);
+}
+
+.tax-calculator-new__final-calculation {
+  background-color: var(--muted);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__effective-rate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.tax-calculator-new__effective-rate-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tax-calculator-new__effective-rate-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+.tax-calculator-new__effective-rate-label {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__effective-rate-right {
+  text-align: right;
+}
+
+.tax-calculator-new__effective-rate-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+.tax-calculator-new__effective-rate-hint {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tax-calculator-new__help {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.tax-calculator-new__help-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.tax-calculator-new__help-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.tax-calculator-new__rates-card {
+  opacity: 0.85;
+}
+
+.tax-calculator-new__rates-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tax-calculator-new__rates-header:hover {
+  opacity: 0.8;
+}
+
+.tax-calculator-new__rates-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tax-calculator-new__rates-chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--muted-foreground);
+  transition: transform 0.2s ease;
+}
+
+.tax-calculator-new__rates-chevron--open {
+  transform: rotate(180deg);
+}
+
+.tax-calculator-new__rates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tax-calculator-new__rates-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tax-calculator-new__rates-item:last-child {
+  border-bottom: none;
+}
+
+.tax-calculator-new__rates-income {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.tax-calculator-new__rates-rate {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-align: right;
+  min-width: 3.5rem;
+}
+
+.tax-calculator-new__source {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tax-calculator-new__source-label {
+  display: block;
+}
+
+.tax-calculator-new__source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.tax-calculator-new__source-link:hover {
+  color: var(--foreground);
+}
+
+.tax-calculator-new__source-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.tax-calculator-new__footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.tax-calculator-new__footer-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
 }
 

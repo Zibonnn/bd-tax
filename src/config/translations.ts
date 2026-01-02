@@ -42,6 +42,7 @@ export interface Translations {
   taxFree: string;
   taxRateSourceLabel: string;
   taxRateSourceValue: string;
+  fiscalYear: string;
 
   // Empty State
   resultsWillAppearHere: string;
@@ -95,6 +96,7 @@ export const translations: Record<Language, Translations> = {
     taxFree: "Tax-free",
     taxRateSourceLabel: "Source:",
     taxRateSourceValue: "NBR Tax Guidelines 2025-26, p 8-9",
+    fiscalYear: "FY 2024-2025",
 
     // Empty State
     resultsWillAppearHere: "Your Results",
@@ -147,6 +149,7 @@ export const translations: Record<Language, Translations> = {
     taxFree: "করমুক্ত",
     taxRateSourceLabel: "সূত্র:",
     taxRateSourceValue: "এনবিআর আয়কর নির্দেশিকা ২০২৫-২৬, পৃষ্ঠা ৮-৯",
+    fiscalYear: "২০২৪-২০২৫ অর্থবছর",
 
     // Empty State
     resultsWillAppearHere: "আপনার ফলাফল",
