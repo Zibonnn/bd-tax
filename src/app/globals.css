@@ -1181,7 +1181,7 @@ html[data-language="bn"] .language-toggle__text {
   .tax-calculator__rates-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0 1.5rem;
+    gap: 0 4rem;
   }
   
   .tax-calculator__rates-item {
