@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Calculator, CheckCircle, TrendingUp } from "lucide-react";
+import { Calculator, ChevronDown, ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { calculateTax } from "@/lib/tax-calculator";
-import { TAX_CONFIG } from "@/config/tax-rates";
+import { TAX_CONFIG, TAX_BRACKETS_LOCALIZED } from "@/config/tax-rates";
 import {
   formatCurrencyLocalized,
   formatNumberLocalized,
@@ -71,6 +69,7 @@ export function TaxCalculator() {
   const [result, setResult] = useState<TaxCalculationResult | null>(null);
   const [grossTaxBeforeRebates, setGrossTaxBeforeRebates] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [isRatesOpen, setIsRatesOpen] = useState<boolean>(false);
 
   // Parse numeric value from string
   const parseNumber = (value: string): number => {
@@ -315,7 +314,7 @@ export function TaxCalculator() {
             <div className="mb-6 w-full">
               <div className="tax-calculator__display font-mono w-full">
                 <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">
-                  {mode === "monthly" ? t.monthly : "Yearly"}
+                  {mode === "monthly" ? "Basic Monthly Salary" : "Basic Annual Salary"}
                 </div>
                 <div className="text-4xl font-semibold tabular-nums">
                   {formatNumberLocalized(parseNumber(display), language)}
@@ -325,14 +324,12 @@ export function TaxCalculator() {
 
               {/* Mode Toggle */}
               <div className="flex justify-center mt-4">
-                <div className="inline-flex bg-muted/30 rounded-lg p-1 border border-border">
+                <div className="tax-calculator__mode-toggle">
                   <button
                     onClick={() => handleModeChange("monthly")}
                     className={cn(
-                      "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                      mode === "monthly"
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                      "tax-calculator__mode-toggle-btn",
+                      mode === "monthly" && "tax-calculator__mode-toggle-btn--active"
                     )}
                   >
                     Monthly
@@ -340,10 +337,8 @@ export function TaxCalculator() {
                   <button
                     onClick={() => handleModeChange("yearly")}
                     className={cn(
-                      "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                      mode === "yearly"
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                      "tax-calculator__mode-toggle-btn",
+                      mode === "yearly" && "tax-calculator__mode-toggle-btn--active"
                     )}
                   >
                     Yearly
@@ -430,71 +425,60 @@ export function TaxCalculator() {
                 </div>
               </div>
             </div>
-
-            {/* Investment Section */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                Investments & Rebates
-              </h3>
-              <div className="space-y-4">
-                {["100% Rebate", "15% Rebate"].map((category) => (
-                  <div key={category}>
-                    <div className="text-xs text-muted-foreground uppercase font-medium mb-2 tracking-wider">
-                      {category}
-                    </div>
-                    <div className="space-y-2">
-                      {investments
-                        .filter((inv) => inv.category === category)
-                        .map((inv) => (
-                          <div key={inv.id} className="space-y-1">
-                            <Label htmlFor={`inv-${inv.id}`} className="text-xs">
-                              {inv.name}
-                              {inv.limit && (
-                                <span className="text-muted-foreground ml-1">
-                                  (Max: {formatMoney(mode === "monthly" ? inv.limit / 12 : inv.limit)})
-                                </span>
-                              )}
-                            </Label>
-                            <Input
-                              id={`inv-${inv.id}`}
-                              type="text"
-                              inputMode="numeric"
-                              placeholder="0"
-                              value={inv.amount}
-                              onChange={(e) => handleInvestmentChange(inv.id, e.target.value)}
-                              className="h-9"
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Calculate Button */}
-            <button
-              onClick={handleCalculate}
-              className="tax-calculator__calculate-btn w-full h-[56px] flex items-center justify-center gap-2"
-              data-calculated={isCalculated}
-            >
-              {isCalculated ? (
-                <>
-                  <CheckCircle className="w-4 h-4" />
-                  Calculated
-                </>
-              ) : (
-                <>
-                  <Calculator className="w-4 h-4" />
-                  {t.calculateTax}
-                </>
-              )}
-            </button>
           </CardContent>
         </Card>
 
         <p className="tax-calculator__note">{t.disclaimer}</p>
+
+        {/* Tax Rates Table */}
+        <Card className="tax-calculator__rates-card">
+          <CardHeader>
+            <div
+              className="tax-calculator__rates-header"
+              onClick={() => setIsRatesOpen(!isRatesOpen)}
+            >
+              <CardTitle className="tax-calculator__card-title">
+                {t.taxRates}
+              </CardTitle>
+              <ChevronDown
+                className={cn(
+                  "tax-calculator__rates-chevron",
+                  isRatesOpen && "tax-calculator__rates-chevron--open"
+                )}
+              />
+            </div>
+          </CardHeader>
+          {isRatesOpen && (
+            <CardContent>
+              <div className="tax-calculator__rates-list">
+                {TAX_BRACKETS_LOCALIZED[language].map((bracket, idx) => (
+                  <div key={idx} className="tax-calculator__rates-item">
+                    <div className="tax-calculator__rates-income">
+                      {bracket.description}
+                    </div>
+                    <div className="tax-calculator__rates-rate">
+                      {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="tax-calculator__source">
+                <span className="tax-calculator__source-label">
+                  {t.taxRateSourceLabel}
+                </span>
+                <a
+                  href="https://nbr.gov.bd/uploads/news-scroller/Nirdeshika_2025-26.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tax-calculator__source-link"
+                >
+                  {t.taxRateSourceValue}
+                  <ArrowUpRight className="tax-calculator__source-icon" />
+                </a>
+              </div>
+            </CardContent>
+          )}
+        </Card>
       </div>
 
       {/* Receipt Column */}
