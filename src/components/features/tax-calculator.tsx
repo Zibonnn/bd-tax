@@ -604,7 +604,7 @@ export function TaxCalculator() {
                 <div className="mt-4 text-center text-xs text-muted-foreground">
                   <div className="h-px border-t border-dashed border-black dark:border-border mb-2"></div>
                   <div>Updated in Real-time</div>
-                  <div className="mt-1">Thank you!</div>
+                  <div className="mt-1 mb-6">Thank you!</div>
                 </div>
               </div>
             </CardContent>

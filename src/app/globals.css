@@ -689,6 +689,175 @@ html[data-language="bn"] .language-toggle__text {
   box-sizing: border-box;
 }
 
+.tax-calculator__result-card {
+  position: relative;
+  padding-bottom: 48px;
+  overflow: visible;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  clip-path: polygon(
+    0% 0%,
+    0% calc(100% - 48px),
+    1.5% calc(100% - 32px),
+    3% calc(100% - 48px),
+    4.5% calc(100% - 32px),
+    6% calc(100% - 48px),
+    7.5% calc(100% - 32px),
+    9% calc(100% - 48px),
+    10.5% calc(100% - 32px),
+    12% calc(100% - 48px),
+    13.5% calc(100% - 32px),
+    15% calc(100% - 48px),
+    16.5% calc(100% - 32px),
+    18% calc(100% - 48px),
+    19.5% calc(100% - 32px),
+    21% calc(100% - 48px),
+    22.5% calc(100% - 32px),
+    24% calc(100% - 48px),
+    25.5% calc(100% - 32px),
+    27% calc(100% - 48px),
+    28.5% calc(100% - 32px),
+    30% calc(100% - 48px),
+    31.5% calc(100% - 32px),
+    33% calc(100% - 48px),
+    34.5% calc(100% - 32px),
+    36% calc(100% - 48px),
+    37.5% calc(100% - 32px),
+    39% calc(100% - 48px),
+    40.5% calc(100% - 32px),
+    42% calc(100% - 48px),
+    43.5% calc(100% - 32px),
+    45% calc(100% - 48px),
+    46.5% calc(100% - 32px),
+    48% calc(100% - 48px),
+    49.5% calc(100% - 32px),
+    51% calc(100% - 48px),
+    52.5% calc(100% - 32px),
+    54% calc(100% - 48px),
+    55.5% calc(100% - 32px),
+    57% calc(100% - 48px),
+    58.5% calc(100% - 32px),
+    60% calc(100% - 48px),
+    61.5% calc(100% - 32px),
+    63% calc(100% - 48px),
+    64.5% calc(100% - 32px),
+    66% calc(100% - 48px),
+    67.5% calc(100% - 32px),
+    69% calc(100% - 48px),
+    70.5% calc(100% - 32px),
+    72% calc(100% - 48px),
+    73.5% calc(100% - 32px),
+    75% calc(100% - 48px),
+    76.5% calc(100% - 32px),
+    78% calc(100% - 48px),
+    79.5% calc(100% - 32px),
+    81% calc(100% - 48px),
+    82.5% calc(100% - 32px),
+    84% calc(100% - 48px),
+    85.5% calc(100% - 32px),
+    87% calc(100% - 48px),
+    88.5% calc(100% - 32px),
+    90% calc(100% - 48px),
+    91.5% calc(100% - 32px),
+    93% calc(100% - 48px),
+    94.5% calc(100% - 32px),
+    96% calc(100% - 48px),
+    97.5% calc(100% - 32px),
+    100% calc(100% - 48px),
+    100% 0%
+  );
+}
+
+.tax-calculator__result-card::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background-color: oklch(1 0 0 / 45%);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  clip-path: polygon(
+    0% 0%,
+    1.5% 100%,
+    3% 0%,
+    4.5% 100%,
+    6% 0%,
+    7.5% 100%,
+    9% 0%,
+    10.5% 100%,
+    12% 0%,
+    13.5% 100%,
+    15% 0%,
+    16.5% 100%,
+    18% 0%,
+    19.5% 100%,
+    21% 0%,
+    22.5% 100%,
+    24% 0%,
+    25.5% 100%,
+    27% 0%,
+    28.5% 100%,
+    30% 0%,
+    31.5% 100%,
+    33% 0%,
+    34.5% 100%,
+    36% 0%,
+    37.5% 100%,
+    39% 0%,
+    40.5% 100%,
+    42% 0%,
+    43.5% 100%,
+    45% 0%,
+    46.5% 100%,
+    48% 0%,
+    49.5% 100%,
+    51% 0%,
+    52.5% 100%,
+    54% 0%,
+    55.5% 100%,
+    57% 0%,
+    58.5% 100%,
+    60% 0%,
+    61.5% 100%,
+    63% 0%,
+    64.5% 100%,
+    66% 0%,
+    67.5% 100%,
+    69% 0%,
+    70.5% 100%,
+    72% 0%,
+    73.5% 100%,
+    75% 0%,
+    76.5% 100%,
+    78% 0%,
+    79.5% 100%,
+    81% 0%,
+    82.5% 100%,
+    84% 0%,
+    85.5% 100%,
+    87% 0%,
+    88.5% 100%,
+    90% 0%,
+    91.5% 100%,
+    93% 0%,
+    94.5% 100%,
+    96% 0%,
+    97.5% 100%,
+    100% 0%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .tax-calculator__result-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.dark .tax-calculator__result-card::after {
+  background-color: oklch(0.205 0 0 / 40%);
+}
+
 .dark .tax-calculator__input-card,
 .dark .tax-calculator__result-card,
 .dark .tax-calculator__rates-card {
