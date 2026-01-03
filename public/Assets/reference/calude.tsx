@@ -82,7 +82,7 @@ const GlassTaxCalculator = () => {
 
     // Calculate rebates based on investment types
     let totalRebate = 0;
-    const rebateBreakdown = [];
+    const rebateBreakdown: Array<{ name: string; amount: number; rebate: number; rate: number }> = [];
 
     investments.forEach(inv => {
       const annualAmount = mode === 'monthly' ? inv.amount * 12 : inv.amount;
