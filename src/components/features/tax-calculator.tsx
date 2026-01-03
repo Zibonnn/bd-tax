@@ -1,23 +1,13 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import Image from "next/image";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { Calculator, CheckCircle, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableFooter,
-} from "@/components/ui/table";
 import { calculateTax } from "@/lib/tax-calculator";
-import { TAX_CONFIG, TAX_BRACKETS_LOCALIZED } from "@/config/tax-rates";
+import { TAX_CONFIG } from "@/config/tax-rates";
 import {
   formatCurrencyLocalized,
   formatNumberLocalized,
@@ -25,6 +15,7 @@ import {
 } from "@/config/translations";
 import { useLanguage } from "@/components/providers/language-provider";
 import type { TaxCalculationResult } from "@/types/tax";
+import { cn } from "@/lib/utils";
 
 interface SalaryBreakdown {
   basic: string;
@@ -32,6 +23,15 @@ interface SalaryBreakdown {
   medical: string;
   conveyance: string;
   others: string;
+}
+
+interface Investment {
+  id: number;
+  name: string;
+  amount: string;
+  rebateRate: number;
+  limit: number | null;
+  category: string;
 }
 
 const INITIAL_BREAKDOWN: SalaryBreakdown = {
@@ -42,131 +42,250 @@ const INITIAL_BREAKDOWN: SalaryBreakdown = {
   others: "",
 };
 
+const INITIAL_INVESTMENTS: Investment[] = [
+  { id: 1, name: "Life Insurance Premium", amount: "", rebateRate: 100, limit: 50000, category: "100% Rebate" },
+  { id: 2, name: "DPS/Savings Certificate", amount: "", rebateRate: 100, limit: 100000, category: "100% Rebate" },
+  { id: 3, name: "Provident Fund", amount: "", rebateRate: 100, limit: null, category: "100% Rebate" },
+  { id: 4, name: "Stock Market Investment", amount: "", rebateRate: 15, limit: null, category: "15% Rebate" },
+  { id: 5, name: "Donation (Zakat Fund)", amount: "", rebateRate: 15, limit: null, category: "15% Rebate" },
+];
+
+const TAX_EXEMPTIONS = {
+  houseRent: { limit: 300000, percentOfBasic: 0.5 },
+  medical: { limit: 120000, percentOfBasic: 0.1 },
+  conveyance: { limit: 30000 },
+};
+
 export function TaxCalculator() {
   const { language, t } = useLanguage();
-  const [monthlySalary, setMonthlySalary] = useState<string>("");
-  const [showBreakdown, setShowBreakdown] = useState(false);
-  const [breakdown, setBreakdown] = useState<SalaryBreakdown>(INITIAL_BREAKDOWN);
+  const [display, setDisplay] = useState("75000");
+  const [mode, setMode] = useState<"monthly" | "yearly">("monthly");
+  const [sliders, setSliders] = useState({
+    basic: 60,
+    houseRent: 25,
+    medical: 10,
+    conveyance: 5,
+  });
+  const [investments, setInvestments] = useState<Investment[]>(INITIAL_INVESTMENTS);
+  const [isCalculated, setIsCalculated] = useState(false);
   const [result, setResult] = useState<TaxCalculationResult | null>(null);
-  const [showTaxRates, setShowTaxRates] = useState(false);
+  const [grossTaxBeforeRebates, setGrossTaxBeforeRebates] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<string>("");
 
   // Parse numeric value from string
   const parseNumber = (value: string): number => {
     return parseFloat(value.replace(/,/g, "")) || 0;
   };
 
-  // Calculate annual taxable income from inputs
+  // Calculate annual taxable income with exemptions
   const calculateAnnualTaxableIncome = useCallback((): number => {
-    if (showBreakdown) {
-      const basic = parseNumber(breakdown.basic);
-      const houseRent = parseNumber(breakdown.houseRent);
-      const medical = parseNumber(breakdown.medical);
-      const conveyance = parseNumber(breakdown.conveyance);
-      const others = parseNumber(breakdown.others);
+    const income = parseNumber(display);
+    const annualGross = mode === "monthly" ? income * 12 : income;
 
-      // Annual amounts
-      const annualBasic = basic * 12;
-      const annualHouseRent = houseRent * 12;
-      const annualMedical = medical * 12;
-      const annualConveyance = conveyance * 12;
-      const annualOthers = others * 12;
+    const basicSalary = annualGross * (sliders.basic / 100);
+    const estHouseRent = annualGross * (sliders.houseRent / 100);
+    const estMedical = annualGross * (sliders.medical / 100);
+    const estConveyance = annualGross * (sliders.conveyance / 100);
 
-      // Tax exemptions (simplified Bangladesh rules)
-      const houseRentExemption = Math.min(
-        annualHouseRent,
-        annualBasic * 0.5,
-        300000
-      );
-      const medicalExemption = Math.min(
-        annualMedical,
-        annualBasic * 0.1,
-        120000
-      );
-      const conveyanceExemption = Math.min(annualConveyance, 30000);
+    const exemptHR = Math.min(
+      estHouseRent,
+      basicSalary * TAX_EXEMPTIONS.houseRent.percentOfBasic,
+      TAX_EXEMPTIONS.houseRent.limit
+    );
+    const exemptMed = Math.min(
+      estMedical,
+      basicSalary * TAX_EXEMPTIONS.medical.percentOfBasic,
+      TAX_EXEMPTIONS.medical.limit
+    );
+    const exemptConv = Math.min(estConveyance, TAX_EXEMPTIONS.conveyance.limit);
 
-      const totalAnnualIncome =
-        annualBasic + annualHouseRent + annualMedical + annualConveyance + annualOthers;
+    const totalExemptions = exemptHR + exemptMed + exemptConv;
+    const taxableIncome = Math.max(0, annualGross - totalExemptions);
 
-      const taxableIncome =
-        totalAnnualIncome -
-        houseRentExemption -
-        medicalExemption -
-        conveyanceExemption;
+    return taxableIncome;
+  }, [display, mode, sliders]);
 
-      return Math.max(0, taxableIncome);
-    } else {
-      return parseNumber(monthlySalary) * 12;
-    }
-  }, [showBreakdown, breakdown, monthlySalary]);
+  // Calculate rebates from investments
+  const calculateRebates = useCallback((): number => {
+    let totalRebate = 0;
+
+    investments.forEach((inv) => {
+      const amount = parseNumber(inv.amount);
+      const annualAmount = mode === "monthly" ? amount * 12 : amount;
+
+      if (annualAmount > 0) {
+        let eligibleAmount = annualAmount;
+
+        if (inv.limit !== null) {
+          eligibleAmount = Math.min(annualAmount, inv.limit);
+        }
+
+        if (inv.rebateRate === 100) {
+          totalRebate += eligibleAmount;
+        } else {
+          totalRebate += eligibleAmount * (inv.rebateRate / 100);
+        }
+      }
+    });
+
+    return totalRebate;
+  }, [investments, mode]);
 
   const handleCalculate = useCallback(() => {
     const annualTaxableIncome = calculateAnnualTaxableIncome();
     const calculationResult = calculateTax(annualTaxableIncome);
-    setResult(calculationResult);
-  }, [calculateAnnualTaxableIncome]);
+    const rebates = calculateRebates();
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: (value: string) => void
-  ) => {
-    const value = e.target.value.replace(/[^\d,]/g, "");
-    setter(value);
-  };
+    // Store gross tax before rebates
+    setGrossTaxBeforeRebates(calculationResult.totalTax);
 
-  const handleBreakdownChange = (
-    field: keyof SalaryBreakdown,
-    value: string
-  ) => {
-    setBreakdown((prev) => ({
-      ...prev,
-      [field]: value.replace(/[^\d,]/g, ""),
-    }));
-  };
+    // Apply rebates to tax
+    const finalTax = Math.max(0, calculationResult.totalTax - rebates);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleCalculate();
+    setResult({
+      ...calculationResult,
+      totalTax: finalTax,
+    });
+    setIsCalculated(true);
+  }, [calculateAnnualTaxableIncome, calculateRebates]);
+
+  const handleNumberClick = (num: string) => {
+    if (display === "0" || display === "75000") {
+      setDisplay(num);
+    } else {
+      setDisplay(display + num);
     }
   };
 
   const handleClear = () => {
-    setMonthlySalary("");
-    setBreakdown(INITIAL_BREAKDOWN);
+    setDisplay("0");
+    setSliders({
+      basic: 60,
+      houseRent: 25,
+      medical: 10,
+      conveyance: 5,
+    });
+    setInvestments(INITIAL_INVESTMENTS.map(inv => ({ ...inv, amount: "" })));
+    setIsCalculated(false);
     setResult(null);
+    setGrossTaxBeforeRebates(0);
   };
 
-  const toggleBreakdown = () => {
-    if (!showBreakdown) {
-      // Switching TO breakdown mode: set monthly salary as basic
-      if (monthlySalary) {
-        setBreakdown((prev) => ({
-          ...prev,
-          basic: monthlySalary,
-        }));
-      }
+  const handleModeChange = (newMode: "monthly" | "yearly") => {
+    if (newMode === mode) return;
+
+    const currentValue = parseNumber(display);
+    if (newMode === "yearly") {
+      setDisplay(String(currentValue * 12));
     } else {
-      // Switching FROM breakdown mode: calculate total and set as monthly salary
-      const basic = parseNumber(breakdown.basic);
-      const houseRent = parseNumber(breakdown.houseRent);
-      const medical = parseNumber(breakdown.medical);
-      const conveyance = parseNumber(breakdown.conveyance);
-      const others = parseNumber(breakdown.others);
-      const total = basic + houseRent + medical + conveyance + others;
-      if (total > 0) {
-        setMonthlySalary(total.toLocaleString("en-IN"));
-      }
+      setDisplay(String(Math.round(currentValue / 12)));
     }
-    setShowBreakdown((prev) => !prev);
-    setResult(null);
+
+    setMode(newMode);
+    // Auto-calculate will trigger due to mode/display change
   };
 
-  const monthlyTax = useMemo(() => {
-    if (result && result.totalTax > 0) {
-      return Math.round(result.totalTax / 12);
-    }
-    return 0;
-  }, [result]);
+  // Auto-calculate when dependencies change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (parseNumber(display) > 0) {
+        handleCalculate();
+      }
+    }, 100); // 100ms debounce to prevent thrashing
+    return () => clearTimeout(timer);
+  }, [display, sliders, investments, mode, handleCalculate]);
+
+  const handleSliderChange = (key: keyof typeof sliders, value: number) => {
+    setSliders((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleInvestmentChange = (id: number, value: string) => {
+    setInvestments((prev) =>
+      prev.map((inv) =>
+        inv.id === id ? { ...inv, amount: value.replace(/[^\d,]/g, "") } : inv
+      )
+    );
+  };
+
+  const formatMoney = useCallback((amount: number): string => {
+    if (isNaN(amount) || !isFinite(amount)) return formatCurrencyLocalized(0, language);
+    return formatCurrencyLocalized(amount, language);
+  }, [language]);
+
+  // Calculate display values for receipt in real-time
+  const receiptData = useMemo(() => {
+    const income = parseNumber(display);
+    if (income <= 0) return null;
+
+    const annualGross = mode === "monthly" ? income * 12 : income;
+    const basicSalary = annualGross * (sliders.basic / 100);
+    const estHouseRent = annualGross * (sliders.houseRent / 100);
+    const estMedical = annualGross * (sliders.medical / 100);
+    const estConveyance = annualGross * (sliders.conveyance / 100);
+
+    const exemptHR = Math.min(
+      estHouseRent,
+      basicSalary * TAX_EXEMPTIONS.houseRent.percentOfBasic,
+      TAX_EXEMPTIONS.houseRent.limit
+    );
+    const exemptMed = Math.min(
+      estMedical,
+      basicSalary * TAX_EXEMPTIONS.medical.percentOfBasic,
+      TAX_EXEMPTIONS.medical.limit
+    );
+    const exemptConv = Math.min(estConveyance, TAX_EXEMPTIONS.conveyance.limit);
+
+    const totalExemptions = exemptHR + exemptMed + exemptConv;
+    const taxableIncome = Math.max(0, annualGross - totalExemptions);
+
+    // Calculate tax in real-time
+    const taxCalculation = calculateTax(taxableIncome);
+    const grossTax = taxCalculation.totalTax;
+
+    const rebates = calculateRebates();
+    const finalTax = Math.max(0, grossTax - rebates);
+    const divisor = mode === "monthly" ? 12 : 1;
+
+    return {
+      gross: annualGross / divisor,
+      exemptions: totalExemptions / divisor,
+      taxable: taxableIncome / divisor,
+      grossTax: grossTax / divisor,
+      rebates: rebates / divisor,
+      payableTax: finalTax / divisor,
+      netPay: (annualGross - finalTax) / divisor,
+      effectiveRate: annualGross > 0 ? (finalTax / annualGross) * 100 : 0,
+      breakdown: taxCalculation.breakdown,
+      rebateBreakdown: investments
+        .filter((inv) => {
+          const amount = parseNumber(inv.amount);
+          return amount > 0;
+        })
+        .map((inv) => {
+          const amount = parseNumber(inv.amount);
+          const annualAmount = mode === "monthly" ? amount * 12 : amount;
+          let eligibleAmount = annualAmount;
+          if (inv.limit !== null) {
+            eligibleAmount = Math.min(annualAmount, inv.limit);
+          }
+          let rebate = 0;
+          if (inv.rebateRate === 100) {
+            rebate = eligibleAmount;
+          } else {
+            rebate = eligibleAmount * (inv.rebateRate / 100);
+          }
+          return {
+            name: inv.name,
+            amount: eligibleAmount / divisor,
+            rebate: rebate / divisor,
+            rate: inv.rebateRate,
+          };
+        }),
+    };
+  }, [display, mode, sliders, investments, calculateRebates, language]);
 
   const formatRate = (rate: number): string => {
     if (language === "bn") {
@@ -175,372 +294,332 @@ export function TaxCalculator() {
     return `${rate}%`;
   };
 
-  const localizedBrackets = TAX_BRACKETS_LOCALIZED[language];
+  // Set current time only on client side to avoid hydration mismatch
+  useEffect(() => {
+    setCurrentTime(new Date().toLocaleTimeString());
+  }, []);
 
   return (
     <div className="tax-calculator">
-      <div className="tax-calculator__sidebar tax-calculator__sidebar--left">
-        {/* Left sidebar - future content */}
-      </div>
       <div className="tax-calculator__main">
+        {/* Calculator Interface */}
         <Card className="tax-calculator__input-card">
-        <CardHeader>
-          <CardTitle className="tax-calculator__card-title">
-            {t.calculateYourTax}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="tax-calculator__form">
-            {!showBreakdown ? (
-              <div className="tax-calculator__field">
-                <Label htmlFor="salary" className="tax-calculator__label">
-                  {t.yourMonthlySalary} ({t.perMonth})
-                </Label>
-                <Input
-                  id="salary"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="e.g. 50,000"
-                  value={monthlySalary}
-                  onChange={(e) => handleInputChange(e, setMonthlySalary)}
-                  onKeyDown={handleKeyDown}
-                  className="tax-calculator__input"
-                />
-                <span className="tax-calculator__field-hint">
-                  {t.enterGrossMonthlySalary}
-                </span>
-              </div>
-            ) : (
-              <div className="tax-calculator__breakdown-fields">
-                <p className="tax-calculator__breakdown-hint">
-                  {t.enterMonthlyComponents}
-                </p>
-                <div className="tax-calculator__field">
-                  <Label htmlFor="basic" className="tax-calculator__label">
-                    {t.basicSalary} ({t.monthly})
-                  </Label>
-                  <Input
-                    id="basic"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="e.g. 30,000"
-                    value={breakdown.basic}
-                    onChange={(e) =>
-                      handleBreakdownChange("basic", e.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                    className="tax-calculator__input"
-                  />
+          <CardHeader>
+            <CardTitle className="tax-calculator__card-title flex items-center gap-2">
+              <Calculator className="w-5 h-5" />
+              {t.calculateYourTax}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Display */}
+            <div className="mb-6 w-full">
+              <div className="tax-calculator__display font-mono w-full">
+                <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">
+                  {mode === "monthly" ? t.monthly : "Yearly"}
                 </div>
-                <div className="tax-calculator__field">
-                  <Label htmlFor="houseRent" className="tax-calculator__label">
-                    {t.houseRentAllowance} ({t.monthly})
-                  </Label>
-                  <Input
-                    id="houseRent"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="e.g. 15,000"
-                    value={breakdown.houseRent}
-                    onChange={(e) =>
-                      handleBreakdownChange("houseRent", e.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                    className="tax-calculator__input"
-                  />
-                </div>
-                <div className="tax-calculator__field">
-                  <Label htmlFor="medical" className="tax-calculator__label">
-                    {t.medicalAllowance} ({t.monthly})
-                  </Label>
-                  <Input
-                    id="medical"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="e.g. 3,000"
-                    value={breakdown.medical}
-                    onChange={(e) =>
-                      handleBreakdownChange("medical", e.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                    className="tax-calculator__input"
-                  />
-                </div>
-                <div className="tax-calculator__field">
-                  <Label htmlFor="conveyance" className="tax-calculator__label">
-                    {t.conveyanceAllowance} ({t.monthly})
-                  </Label>
-                  <Input
-                    id="conveyance"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="e.g. 2,500"
-                    value={breakdown.conveyance}
-                    onChange={(e) =>
-                      handleBreakdownChange("conveyance", e.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                    className="tax-calculator__input"
-                  />
-                </div>
-                <div className="tax-calculator__field">
-                  <Label htmlFor="others" className="tax-calculator__label">
-                    {t.otherAllowances} ({t.monthly})
-                  </Label>
-                  <Input
-                    id="others"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="e.g. 5,000"
-                    value={breakdown.others}
-                    onChange={(e) =>
-                      handleBreakdownChange("others", e.target.value)
-                    }
-                    onKeyDown={handleKeyDown}
-                    className="tax-calculator__input"
-                  />
+                <div className="text-4xl font-semibold tabular-nums">
+                  {formatNumberLocalized(parseNumber(display), language)}
+                  <sup className="text-base font-normal ml-1">TAKA</sup>
                 </div>
               </div>
-            )}
 
-            <div className="tax-calculator__footer">
-              <button
-                type="button"
-                onClick={toggleBreakdown}
-                className="tax-calculator__toggle-link"
-              >
-                {showBreakdown ? t.iOnlyKnowTotal : t.iKnowMyBreakdown}
-              </button>
-
-              <div className="tax-calculator__actions">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleClear}
-                  className="tax-calculator__btn tax-calculator__btn--clear"
-                >
-                  {t.clear}
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleCalculate}
-                  className="tax-calculator__btn"
-                >
-                  {t.calculateTax}
-                </Button>
+              {/* Mode Toggle */}
+              <div className="flex justify-center mt-4">
+                <div className="inline-flex bg-muted/30 rounded-lg p-1 border border-border">
+                  <button
+                    onClick={() => handleModeChange("monthly")}
+                    className={cn(
+                      "px-4 py-2 rounded-md text-sm font-medium transition-all",
+                      mode === "monthly"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => handleModeChange("yearly")}
+                    className={cn(
+                      "px-4 py-2 rounded-md text-sm font-medium transition-all",
+                      mode === "yearly"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Yearly
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      <p className="tax-calculator__note">{t.disclaimer}</p>
+            {/* Number Pad and Salary Mixer */}
+            <div className="flex flex-col md:flex-row gap-12 mb-6 w-full">
+              {/* Number Pad */}
+              {/* Number Pad */}
+              <div className="grid grid-cols-3 gap-4 flex-1">
+                {["7", "8", "9", "4", "5", "6", "1", "2", "3"].map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => handleNumberClick(num)}
+                    className="tax-calculator__num-pad-btn flex items-center justify-center text-lg"
+                  >
+                    {num}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handleNumberClick("0")}
+                  className="tax-calculator__num-pad-btn flex items-center justify-center text-lg"
+                >
+                  0
+                </button>
+                <button
+                  onClick={() => handleNumberClick("00")}
+                  className="tax-calculator__num-pad-btn flex items-center justify-center text-lg"
+                >
+                  00
+                </button>
+                <button
+                  onClick={handleClear}
+                  className="tax-calculator__num-pad-btn tax-calculator__clear-btn flex items-center justify-center text-lg"
+                >
+                  C
+                </button>
+              </div>
 
-        {/* Tax Rates Card - collapsible */}
-        <Card className="tax-calculator__rates-card">
-          <CardHeader
-            className="tax-calculator__rates-header"
-            onClick={() => setShowTaxRates(!showTaxRates)}
-          >
-            <CardTitle className="tax-calculator__card-title">
-              {t.taxRates} ({TAX_CONFIG.fiscalYear})
-            </CardTitle>
-            <ChevronDown
-              className={`tax-calculator__rates-chevron ${showTaxRates ? "tax-calculator__rates-chevron--open" : ""}`}
-            />
-          </CardHeader>
-          {showTaxRates && (
-            <CardContent>
-              <div className="tax-calculator__rates-list">
-                {localizedBrackets.map((bracket, index) => (
-                  <div key={index} className="tax-calculator__rates-item">
-                    <span className="tax-calculator__rates-income">
-                      {bracket.description}
-                    </span>
-                    <span className="tax-calculator__rates-rate">
-                      {bracket.rate === 0 ? t.taxFree : formatRate(bracket.rate)}
-                    </span>
+              {/* Salary Mixer */}
+              {/* Salary Mixer */}
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold mb-4">Salary Breakdown</h3>
+                <div className="flex flex-col gap-5">
+                  {Object.entries(sliders).map(([key, value]) => {
+                    // Calculate ball position: value 0 = left (0%), value 80 = right (100%)
+                    const percentage = (value / 80) * 100;
+
+                    return (
+                      <div key={key} className="flex flex-col gap-2">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-muted-foreground capitalize font-medium">
+                            {key === "houseRent" ? "House Rent" : key}
+                          </span>
+                          <span className="font-semibold tabular-nums">{value}%</span>
+                        </div>
+                        <div className="tax-calculator__slider-container">
+                          {/* Track Background is handled by container via CSS */}
+                          <div
+                            className="tax-calculator__slider-progress"
+                            style={{ width: `${percentage}%` }}
+                          />
+                          <div
+                            className="tax-calculator__slider-ball"
+                            style={{ left: `${percentage}%` }}
+                          />
+                          <input
+                            type="range"
+                            min="0"
+                            max="80"
+                            value={value}
+                            onChange={(e) =>
+                              handleSliderChange(key as keyof typeof sliders, parseFloat(e.target.value))
+                            }
+                            className="tax-calculator__slider-input"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Investment Section */}
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Investments & Rebates
+              </h3>
+              <div className="space-y-4">
+                {["100% Rebate", "15% Rebate"].map((category) => (
+                  <div key={category}>
+                    <div className="text-xs text-muted-foreground uppercase font-medium mb-2 tracking-wider">
+                      {category}
+                    </div>
+                    <div className="space-y-2">
+                      {investments
+                        .filter((inv) => inv.category === category)
+                        .map((inv) => (
+                          <div key={inv.id} className="space-y-1">
+                            <Label htmlFor={`inv-${inv.id}`} className="text-xs">
+                              {inv.name}
+                              {inv.limit && (
+                                <span className="text-muted-foreground ml-1">
+                                  (Max: {formatMoney(mode === "monthly" ? inv.limit / 12 : inv.limit)})
+                                </span>
+                              )}
+                            </Label>
+                            <Input
+                              id={`inv-${inv.id}`}
+                              type="text"
+                              inputMode="numeric"
+                              placeholder="0"
+                              value={inv.amount}
+                              onChange={(e) => handleInvestmentChange(inv.id, e.target.value)}
+                              className="h-9"
+                            />
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 ))}
               </div>
-              <p className="tax-calculator__source">
-                <span className="tax-calculator__source-label">{t.taxRateSourceLabel}</span>
-                <a
-                  href="https://nbr.gov.bd/uploads/news-scroller/Nirdeshika_2025-26.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tax-calculator__source-link"
-                >
-                  {t.taxRateSourceValue}
-                  <ArrowUpRight className="tax-calculator__source-icon" />
-                </a>
-              </p>
-            </CardContent>
-          )}
+            </div>
+
+            {/* Calculate Button */}
+            <button
+              onClick={handleCalculate}
+              className="tax-calculator__calculate-btn w-full h-[56px] flex items-center justify-center gap-2"
+              data-calculated={isCalculated}
+            >
+              {isCalculated ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  Calculated
+                </>
+              ) : (
+                <>
+                  <Calculator className="w-4 h-4" />
+                  {t.calculateTax}
+                </>
+              )}
+            </button>
+          </CardContent>
         </Card>
+
+        <p className="tax-calculator__note">{t.disclaimer}</p>
       </div>
 
+      {/* Receipt Column */}
       <div className="tax-calculator__sidebar tax-calculator__sidebar--right">
-        {result && result.annualIncome > 0 ? (
+        {receiptData ? (
           <Card className="tax-calculator__result-card">
-            <CardHeader>
-              <CardTitle className="tax-calculator__card-title">
-                {t.yourTaxSummary}
-              </CardTitle>
-            </CardHeader>
             <CardContent>
-              <div className="tax-calculator__summary">
-                <div className="tax-calculator__summary-item tax-calculator__summary-item--highlight">
-                  <span className="tax-calculator__summary-label">
-                    {t.monthlyTax}
-                  </span>
-                  <span className="tax-calculator__summary-value">
-                    {formatCurrencyLocalized(monthlyTax, language)}
-                  </span>
+              <div className="tax-receipt text-base space-y-3">
+                {/* Receipt Header */}
+                <div className="text-center border-b border-dashed border-black dark:border-border pb-3 mb-3">
+                  <div className="font-bold text-base">TAX RECEIPT</div>
+                  <div className="text-xs text-muted-foreground">FY {TAX_CONFIG.fiscalYear}</div>
+                  {currentTime && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {currentTime}
+                    </div>
+                  )}
                 </div>
-                <div className="tax-calculator__summary-item">
-                  <span className="tax-calculator__summary-label">
-                    {t.yearlyTax}
-                  </span>
-                  <span className="tax-calculator__summary-value">
-                    {formatCurrencyLocalized(result.totalTax, language)}
-                  </span>
+
+                {/* Gross Income */}
+                <div className="space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Gross {mode === "monthly" ? "Mo." : "Yr."}:
+                    </span>
+                    <span className="font-semibold">{formatMoney(receiptData.gross)}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Exemptions:</span>
+                    <span className="font-semibold text-green-600 dark:text-green-500">-{formatMoney(receiptData.exemptions)}</span>
+                  </div>
                 </div>
-                <div className="tax-calculator__summary-item">
-                  <span className="tax-calculator__summary-label">
-                    {t.effectiveRate}
-                  </span>
-                  <span className="tax-calculator__summary-value">
-                    {formatRate(result.effectiveRate)}
-                  </span>
+
+                <div className="border-t border-dashed border-black dark:border-border pt-2">
+                  <div className="flex justify-between font-semibold">
+                    <span>Taxable:</span>
+                    <span>{formatMoney(receiptData.taxable)}</span>
+                  </div>
+                </div>
+
+                {/* Tax Slabs */}
+                <div className="my-3">
+                  <div className="text-xs text-muted-foreground mb-2 text-center uppercase tracking-wider">
+                    Tax Slabs
+                  </div>
+                  {receiptData.breakdown.map((item, idx) => (
+                    <div key={idx} className={`flex justify-between text-sm pb-1 ${idx < receiptData.breakdown.length - 1 ? 'border-b border-dashed border-gray-300 dark:border-gray-600 mb-1' : ''}`}>
+                      <span className="text-muted-foreground">
+                        {item.bracket.replace("First ", "").replace("Next ", "")} ({formatRate(item.rate)})
+                      </span>
+                      <span className={item.tax > 0 ? "font-semibold" : "text-muted-foreground"}>
+                        {item.tax > 0 ? formatMoney(item.tax / (mode === "monthly" ? 12 : 1)) : "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-dashed border-black dark:border-border pt-2">
+                  <div className="flex justify-between font-semibold">
+                    <span>Gross Tax:</span>
+                    <span>{formatMoney(receiptData.grossTax)}</span>
+                  </div>
+                </div>
+
+                {/* Rebates */}
+                {receiptData.rebateBreakdown.length > 0 && (
+                  <div className="mt-3 space-y-1">
+                    <div className="text-xs text-muted-foreground mb-2 text-center uppercase tracking-wider">
+                      Rebates
+                    </div>
+                    {receiptData.rebateBreakdown.map((item, idx) => (
+                      <div key={idx} className="flex justify-between text-muted-foreground text-sm">
+                        <span className="truncate mr-2">{item.name}</span>
+                        <span className="font-semibold whitespace-nowrap">
+                          -{formatMoney(item.rebate)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div className="border-t border-dashed border-gray-300 dark:border-gray-600 mt-3 pt-2"></div>
+
+                {/* Net Pay */}
+                <div>
+                  <div className="flex justify-between font-semibold">
+                    <span>Net Take Home:</span>
+                    <span className="text-green-600 dark:text-green-500">{formatMoney(receiptData.netPay)}</span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-dashed border-gray-300 dark:border-gray-600 mt-3 pt-3"></div>
+
+                {/* Tax Payable - Prominent Display */}
+                <div className="mt-4 text-center">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                    {mode === "monthly" ? "Monthly" : "Yearly"} Tax Payable
+                  </div>
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-500">{formatMoney(receiptData.payableTax)}</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Rate: {receiptData.effectiveRate.toFixed(2)}%
+                  </div>
+                </div>
+
+                <div className="mt-4 text-center text-xs text-muted-foreground">
+                  <div className="h-px border-t border-dashed border-black dark:border-border mb-2"></div>
+                  <div>Updated in Real-time</div>
+                  <div className="mt-1">Thank you!</div>
                 </div>
               </div>
-
-              {result.breakdown.length > 0 && (
-                <div className="tax-calculator__breakdown">
-                  <h3 className="tax-calculator__breakdown-title">
-                    {t.howTaxCalculated}
-                  </h3>
-                  <p className="tax-calculator__breakdown-note">
-                    {t.basedOnAnnualIncome} {formatCurrencyLocalized(result.annualIncome, language)}
-                  </p>
-                  
-                  {/* Desktop table - hidden on mobile */}
-                  <div className="tax-calculator__breakdown-desktop">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t.incomeSlab}</TableHead>
-                          <TableHead className="text-right">{t.amount}</TableHead>
-                          <TableHead className="text-right">{t.rate}</TableHead>
-                          <TableHead className="text-right">{t.tax}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {result.breakdown.map((item, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              {localizedBrackets[index]?.description || item.bracket}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatNumberLocalized(item.taxableAmount, language)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatRate(item.rate)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {formatNumberLocalized(item.tax, language)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TableCell colSpan={3}>{t.totalYearlyTax}</TableCell>
-                          <TableCell className="text-right">
-                            {formatCurrencyLocalized(result.totalTax, language)}
-                          </TableCell>
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
-                  </div>
-
-                  {/* Mobile table - 2 columns with stacked data */}
-                  <div className="tax-calculator__breakdown-mobile">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>
-                            <span className="tax-calculator__stacked-header">
-                              <span>{t.incomeSlab}</span>
-                              <span className="tax-calculator__stacked-sub">{t.amount}</span>
-                            </span>
-                          </TableHead>
-                          <TableHead className="text-right">
-                            <span className="tax-calculator__stacked-header">
-                              <span>{t.rate}</span>
-                              <span className="tax-calculator__stacked-sub">{t.tax}</span>
-                            </span>
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {result.breakdown.map((item, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <span className="tax-calculator__stacked-cell">
-                                <span className="tax-calculator__stacked-primary">
-                                  {localizedBrackets[index]?.description || item.bracket}
-                                </span>
-                                <span className="tax-calculator__stacked-secondary">
-                                  {formatNumberLocalized(item.taxableAmount, language)}
-                                </span>
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <span className="tax-calculator__stacked-cell tax-calculator__stacked-cell--right">
-                                <span className="tax-calculator__stacked-primary">
-                                  {formatRate(item.rate)}
-                                </span>
-                                <span className="tax-calculator__stacked-secondary">
-                                  {formatNumberLocalized(item.tax, language)}
-                                </span>
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                      <TableFooter>
-                        <TableRow>
-                          <TableCell>{t.totalYearlyTax}</TableCell>
-                          <TableCell className="text-right">
-                            {formatCurrencyLocalized(result.totalTax, language)}
-                          </TableCell>
-                        </TableRow>
-                      </TableFooter>
-                    </Table>
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         ) : (
           <Card className="tax-calculator__empty-card">
             <CardContent>
               <div className="tax-calculator__empty-state">
-                <Image
-                  src="/Assets/illus/empty_state.svg"
-                  alt=""
-                  width={132}
-                  height={142}
-                  className="tax-calculator__empty-illustration"
+                <img 
+                  src="/Assets/illus/empty_state.svg" 
+                  alt="Empty state illustration" 
+                  className="tax-calculator__empty-illustration mb-4"
                 />
-                <h3 className="tax-calculator__empty-title">
-                  {t.resultsWillAppearHere}
-                </h3>
-                <p className="tax-calculator__empty-text">
-                  {t.enterSalaryToCalculate}
-                </p>
+                <h3 className="tax-calculator__empty-title">{t.resultsWillAppearHere}</h3>
+                <p className="tax-calculator__empty-text">{t.enterSalaryToCalculate}</p>
               </div>
             </CardContent>
           </Card>
