@@ -83,22 +83,42 @@ export function ThemeToggle() {
         Math.max(y, window.innerHeight - y)
       );
 
+      const root = document.documentElement;
+
       // Set CSS custom properties for the animation
-      document.documentElement.style.setProperty("--ripple-x", `${x}px`);
-      document.documentElement.style.setProperty("--ripple-y", `${y}px`);
-      document.documentElement.style.setProperty(
-        "--ripple-radius",
-        `${maxRadius}px`
-      );
+      root.style.setProperty("--ripple-x", `${x}px`);
+      root.style.setProperty("--ripple-y", `${y}px`);
+      root.style.setProperty("--ripple-radius", `${maxRadius}px`);
+
+      // Set transition direction BEFORE starting transition
+      // This prevents z-index flash by telling CSS which direction we're going
+      root.setAttribute("data-theme-transition", newTheme);
 
       setIsAnimating(true);
 
       const transition = document.startViewTransition(() => {
+        // Update DOM immediately to prevent flash
+        if (newTheme === "dark") {
+          root.classList.add("dark");
+        } else {
+          root.classList.remove("dark");
+        }
+        
+        // Update localStorage to persist theme
+        try {
+          localStorage.setItem("theme", newTheme);
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+        
+        // Then update next-themes state
         setTheme(newTheme);
       });
 
       transition.finished.then(() => {
         setIsAnimating(false);
+        // Clean up transition attribute
+        root.removeAttribute("data-theme-transition");
       });
     },
     [resolvedTheme, setTheme]

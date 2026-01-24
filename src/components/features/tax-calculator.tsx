@@ -432,22 +432,20 @@ export function TaxCalculator() {
 
         {/* Tax Rates Table */}
         <Card className="tax-calculator__rates-card">
-          <CardHeader>
-            <div
-              className="tax-calculator__rates-header"
-              onClick={() => setIsRatesOpen(!isRatesOpen)}
-            >
-              <CardTitle className="tax-calculator__card-title">
-                {t.taxRates}
-              </CardTitle>
-              <ChevronDown
-                className={cn(
-                  "tax-calculator__rates-chevron",
-                  isRatesOpen && "tax-calculator__rates-chevron--open"
-                )}
-              />
+          <div
+            className="tax-calculator__rates-header"
+            onClick={() => setIsRatesOpen(!isRatesOpen)}
+          >
+            <div className="tax-calculator__card-title">
+              {t.taxRates}
             </div>
-          </CardHeader>
+            <ChevronDown
+              className={cn(
+                "tax-calculator__rates-chevron",
+                isRatesOpen && "tax-calculator__rates-chevron--open"
+              )}
+            />
+          </div>
           {isRatesOpen && (
             <CardContent>
               <div className="tax-calculator__rates-list">

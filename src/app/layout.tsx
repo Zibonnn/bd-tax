@@ -74,7 +74,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange={false}
+          disableTransitionOnChange
         >
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>

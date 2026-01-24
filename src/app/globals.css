@@ -287,34 +287,27 @@ td {
 /* ========================================
    Theme Toggle Animation (Ripple Effect)
    ======================================== */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
 
+/* Old view stays static (no animation) */
 ::view-transition-old(root) {
+  animation: none;
   z-index: 1;
 }
 
-::view-transition-new(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
-}
-
+/* New view animates with ripple effect */
 ::view-transition-new(root) {
   animation: ripple-in 0.5s ease-out;
+  mix-blend-mode: normal;
+  z-index: 9999;
 }
 
-::view-transition-old(root) {
-  animation: ripple-out 0.5s ease-out;
+/* Ensure new theme is always on top regardless of direction */
+[data-theme-transition="dark"]::view-transition-old(root) {
+  z-index: 1;
+}
+
+[data-theme-transition="dark"]::view-transition-new(root) {
+  z-index: 9999;
 }
 
 @keyframes ripple-in {
@@ -324,16 +317,6 @@ td {
 
   to {
     clip-path: circle(var(--ripple-radius, 100%) at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
-}
-
-@keyframes ripple-out {
-  from {
-    clip-path: circle(var(--ripple-radius, 100%) at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
-
-  to {
-    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
   }
 }
 
@@ -1400,12 +1383,6 @@ html[data-language="bn"] .language-toggle__text {
   padding-bottom: 1.5rem !important;
 }
 
-.tax-calculator__rates-card [data-slot="card-header"] {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
-
 .tax-calculator__rates-header {
   cursor: pointer;
   display: flex;
@@ -1413,6 +1390,13 @@ html[data-language="bn"] .language-toggle__text {
   align-items: center;
   -webkit-user-select: none;
   user-select: none;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .tax-calculator__rates-header {
+    padding: 0 1.5rem;
+  }
 }
 
 .tax-calculator__rates-header:hover {
@@ -1490,8 +1474,7 @@ html[data-language="bn"] .language-toggle__text {
 /* Grid layout for rates list on larger screens */
 @media (min-width: 640px) {
   .tax-calculator__rates-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 0 4rem;
   }
 
